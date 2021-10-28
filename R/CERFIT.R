@@ -19,14 +19,14 @@
 #' @importFrom stats complete.cases
 #' @importFrom stats terms
 #' @param formula Formula to build CERFIT.  Categorical predictors must be listed as a factor. e.g., Y ~ x1 + x2 | treatment
-#' @param data Data to grwo a tree.
-#' @param search Method to search throught candidate splits
-#' @param method For observational stuy data, method="observation";for randomized study data, method="RCT".
+#' @param data Data to grow a tree.
+#' @param search Method to search through candidate splits
+#' @param method For observational study data, method="observation";for randomized study data, method="RCT".
 #' @param PropForm Method to estimate propensity score
 #' @param split Impurity measure splitting statistic
-#' @param mtry Number of varialbes to consider at each split
+#' @param mtry Number of variables to consider at each split
 #' @param nsplit Number of cut points selected
-#' @param nsplit.random Logical: indicates if process to select cutpts are random
+#' @param nsplit.random Logical: indicates if process to select cut points are random
 #' @param minsplit Number of observations required to continue growing tree
 #' @param minbucket Number of observations required in each child node
 #' @param maxdepth Maximum depth of tree
