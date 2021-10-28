@@ -12,7 +12,7 @@ predict.CERFIT <- function(cerfit, data,newdata, gridval=NULL, prediction=c("ove
     cumsum(xTemp)/cumsum(!is.na(x))
     }
   #utrt<- sort(unique(c(fitted(cerfit[[1]]$tree)[,3],fitted(cerfit[[2]]$tree)[,3],fitted(cerfit[[3]]$tree)[,3])))
-  formulaTree <- formula(cerfit[[1]]$tree$terms)
+  formulaTree <- stats::formula(cerfit[[1]]$tree$terms)
   treatment <- all.vars(formulaTree)[length(all.vars(formulaTree))]
   utrt<-sort(unique(data[[treatment]]))
   LB<-min(data[[treatment]])
@@ -23,9 +23,9 @@ predict.CERFIT <- function(cerfit, data,newdata, gridval=NULL, prediction=c("ove
   #ntrt <- length(utrt)
   # if grival is null, use the 10th quantile
   if(useRse){
-    resformula<-  as.formula(paste(all.vars(formulaTree)[1], paste(all.vars(formulaTree)[2:(length(all.vars(formulaTree))-1)], collapse=" + "), sep=" ~ "))
-    reslm<-lm(resformula,data)
-    ylmp<-predict(reslm,newdata)
+    resformula <-  stats::as.formula(paste(all.vars(formulaTree)[1], paste(all.vars(formulaTree)[2:(length(all.vars(formulaTree))-1)], collapse=" + "), sep=" ~ "))
+    reslm <- stats::lm(resformula,data)
+    ylmp <- stats::predict(reslm,newdata)
   } else {
     ylmp<-rep(0,nrow(newdata))
   }
@@ -33,7 +33,7 @@ predict.CERFIT <- function(cerfit, data,newdata, gridval=NULL, prediction=c("ove
     ntrt=length(utrt)
     gridval<-utrt
   } else if(is.null(gridval)) { # if more than 20, and gridval is null, use percentiles at 5% increment
-    gridval<-quantile(utrt, prob = seq(0, 1, length = 21))
+    gridval <- stats::quantile(utrt, prob = seq(0, 1, length = 21))
     ntrt<-length(gridval)-1
   } else {
     ntrt<-length(gridval)}

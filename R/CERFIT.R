@@ -30,6 +30,8 @@
 #' @importFrom partykit split_node
 #' @importFrom partykit info_node
 #' @importFrom grid depth
+#' @importFrom stats complete.cases
+#' @importFrom stats terms
 
 
 #'
@@ -63,9 +65,9 @@ CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","s
   }
   print(paste(response.type,"response"))
   if(useRes){
-    resformula<- as.formula(paste(all.vars(formula)[1], paste(all.vars(formula)[2:(length(all.vars(formula))-1)], collapse=" + "), sep=" ~ "))
-    reslm<-lm(resformula,data)
-    eres<-resid(reslm)
+    resformula<- stats::as.formula(paste(all.vars(formula)[1], paste(all.vars(formula)[2:(length(all.vars(formula))-1)], collapse=" + "), sep=" ~ "))
+    reslm <- stats::lm(resformula,data)
+    eres <- stats::resid(reslm)
     data$yo <- data[[all.vars(formula)[1]]]
     data[[all.vars(formula)[1]]] <- eres
   }
@@ -81,32 +83,32 @@ CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","s
 
 
   if(method=="observation"){
-    propformula <- as.formula(paste(all.vars(formula)[length(all.vars(formula))], paste(all.vars(formula)[2:(length(all.vars(formula))-1)], collapse=" + "), sep=" ~ "))
+    propformula <- stats::as.formula(paste(all.vars(formula)[length(all.vars(formula))], paste(all.vars(formula)[2:(length(all.vars(formula))-1)], collapse=" + "), sep=" ~ "))
     if(trt.type=="continuous"){
       if(PropForm=="CBPS"){
-        propfun <- CBPS(propformula, data = data[,all.vars(formula)[-1]],ATT=FALSE,method = "exact")#
+        propfun <- CBPS::CBPS(propformula, data = data[,all.vars(formula)[-1]],ATT=FALSE,method = "exact")#
         prop <- propfun$fitted.values
         Iptw <- propfun$weights
       } else if(PropForm=="HI") {
-        propfun <- lm(propformula,data=data[all.vars(formula)[-1]])
-        prt <- predict(propfun)
+        propfun <- stats::lm(propformula,data=data[all.vars(formula)[-1]])
+        prt <- stats::predict(propfun)
         sigm <- summary(propfun)$sigma
-        prop <- dnorm(TrT,prt,sigm)
-        modhi=lm(TrT~1)
+        prop <- stats::dnorm(TrT,prt,sigm)
+        modhi = stats::lm(TrT~1)
         ps.num=dnorm((TrT-modhi$fitted)/(summary(modhi))$sigma,0,1)
         Iptw=ps.num/prop
       }
     } else if(trt.type=="binary") {
       if (PropForm=="GBM") {
-        propfun<-ps(propformula,data=data[,all.vars(formula)[-1]],interaction.depth = 4, stop.method = "es.max",estimand="ATE",verbose=FALSE,n.trees = 10000)
-        prop<-propfun$ps
-        Iptw<-get.weights(propfun,stop.method = "es.max",estimand="ATE")
+        propfun <- twang::ps(propformula,data=data[,all.vars(formula)[-1]],interaction.depth = 4, stop.method = "es.max",estimand="ATE",verbose=FALSE,n.trees = 10000)
+        prop <- propfun$ps
+        Iptw<- twang::get.weights(propfun,stop.method = "es.max",estimand="ATE")
       } else if (PropForm=="CBPS") {
-        propfun <- CBPS(propformula, data = data[,all.vars(formula)[-1]],ATT=FALSE,method = "exact")#
+        propfun <- CBPS::CBPS(propformula, data = data[,all.vars(formula)[-1]],ATT=FALSE,method = "exact")#
         prop <- propfun$fitted.values
         Iptw <- propfun$weights
       } else if (PropForm=="randomForest") {
-        propfun<- suppressWarnings(randomForest(propformula,data=data[all.vars(formula)[-1]]))
+        propfun<- suppressWarnings(randomForest::randomForest(propformula,data=data[all.vars(formula)[-1]]))
         prop <- propfun$predicted
         Iptw <- sum(TrT)/length(TrT)*TrT/prop+sum(1-TrT)/length(TrT)*(1-TrT)/(1-prop)
         #Iptw <-TrT/prop+(1-TrT)/(1-prop)
@@ -126,7 +128,7 @@ CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","s
         Iptw <- twang::get.weights(propfun,stop.method = "es.max",estimand="ATE")
       } else if (PropForm=="CBPS" & trt.length<5 ) {
         data[,all.vars(formula)[length(all.vars(formula))]]<-as.factor(data[,all.vars(formula)[length(all.vars(formula))]])
-        propfun <- CBPS(propformula, data = data[,all.vars(formula)[-1]],ATT=FALSE,method = "exact")#
+        propfun <- CBPS::CBPS(propformula, data = data[,all.vars(formula)[-1]],ATT=FALSE,method = "exact")#
         prop <- propfun$fitted.values
         Iptw <- propfun$weights
         levels(data[,all.vars(formula)[length(all.vars(formula))]])<-c(1:trt.length)
@@ -140,11 +142,11 @@ CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","s
       for (TrT_split in order_length){
         TrT_temp <- TrT[[1]] <= TrT_split
         if (length(unique(TrT_temp)) == 1) next else TrT_splits[i] <- TrT_split
-        propformula_temp <- as.formula(paste("TrT_temp",
+        propformula_temp <- stats::as.formula(paste("TrT_temp",
                          paste(all.vars(formula)[2:(length(all.vars(formula))-1)],
                                collapse = "+"),
                          sep = "~"))
-        propfun <- CBPS(propformula_temp,ATT=FALSE,method = "exact",
+        propfun <- CBPS::CBPS(propformula_temp,ATT=FALSE,method = "exact",
                         data = data[,all.vars(formula)[c(-1,-length(all.vars(formula)))]])
         #propfun<- suppressWarnings(randomForest(x = data[all.vars(formula)[-length(all.vars(formula))][-1]],
         #                                        y = as.factor(TrT_temp)))
@@ -156,9 +158,9 @@ CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","s
       names(prop) <- TrT_splits[!is.na(TrT_splits)]
       #data[,all.vars(formula)[length(all.vars(formula))]]<-as.factor(as.numeric(data[,all.vars(formula)[length(all.vars(formula))]]))
       print(class(data[,all.vars(formula)[length(all.vars(formula))]]))
-      propfun<-mnps(propformula,data=data[,all.vars(formula)[-1]],interaction.depth = 4,
+      propfun <- twang::mnps(propformula,data=data[,all.vars(formula)[-1]],interaction.depth = 4,
                     stop.method = "es.max",estimand="ATE",verbose=FALSE,n.trees = 10000)
-      Iptw <- get.weights(propfun,stop.method = "es.max",estimand="ATE")
+      Iptw <- twang::get.weights(propfun,stop.method = "es.max",estimand="ATE")
       #Iptw<- rep(1,nrow(data))
       #Iptw <- sum(TrT)/length(TrT)*TrT/prop+sum(1-TrT)/length(TrT)*(1-TrT)/(1-prop)
       #Iptw <-TrT/prop+(1-TrT)/(1-prop)

@@ -21,4 +21,6 @@ Imports:
     randomForest,
     twang,
     Rcpp,
-    RcppArmadillo
+    RcppArmadillo,
+    stats,
+    glmnet
