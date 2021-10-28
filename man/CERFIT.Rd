@@ -28,21 +28,21 @@ CERFIT(
 \arguments{
 \item{formula}{Formula to build CERFIT.  Categorical predictors must be listed as a factor. e.g., Y ~ x1 + x2 | treatment}
 
-\item{data}{Data to grwo a tree.}
+\item{data}{Data to grow a tree.}
 
-\item{search}{Method to search throught candidate splits}
+\item{search}{Method to search through candidate splits}
 
-\item{method}{For observational stuy data, method="observation";for randomized study data, method="RCT".}
+\item{method}{For observational study data, method="observation";for randomized study data, method="RCT".}
 
 \item{PropForm}{Method to estimate propensity score}
 
 \item{split}{Impurity measure splitting statistic}
 
-\item{mtry}{Number of varialbes to consider at each split}
+\item{mtry}{Number of variables to consider at each split}
 
 \item{nsplit}{Number of cut points selected}
 
-\item{nsplit.random}{Logical: indicates if process to select cutpts are random}
+\item{nsplit.random}{Logical: indicates if process to select cut points are random}
 
 \item{minsplit}{Number of observations required to continue growing tree}
 
