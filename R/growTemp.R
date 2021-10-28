@@ -1,7 +1,7 @@
 ### Grow tree by using partition() function several times in a recursive loop ###
 growTemp <- function(id=1L, depth=1L, data, response, treatment, Propensity, subset, search, method, split,
                      mtry, nsplit, nsplit.random, minsplit, minbucket, maxdepth,
-                     a, scale.y, trtlevels,response.type){ 
+                     a, scale.y, trtlevels,response.type){
   if (depth > maxdepth) {return(partynode(id=id))}
   y <- data[[response]]
   trt<-data[[treatment]]
@@ -9,14 +9,14 @@ growTemp <- function(id=1L, depth=1L, data, response, treatment, Propensity, sub
   varSelected <- sort(sample.int(ncol(data)-4, mtry))
   vars <- data[varSelected]
   colnames(vars) <- varSelected #Have columns represent varid
-  
+
   sp <- partition(vars=vars, y=y,  subset=subset,trt=trt,propensity=propensity,
                   search=search, method=method, split=split, nsplit=nsplit, nsplit.random=nsplit.random,
                   minsplit=minsplit, minbucket=minbucket, a=a, scale.y=scale.y,
-                  useSearch=useSearch, useOptim=useOptim,trtlevels=trtlevels,response.type = response.type)
-  
+                  trtlevels=trtlevels,response.type = response.type)
+  #useSearch=useSearch, useOptim=useOptim,
   if (is.null(sp)) {return(partynode(id=id))}
-  
+
   # Split the data
   kidids <- kidids_split(sp, data=data)
   depth <- depth + 1

@@ -31,7 +31,7 @@
 #' @importFrom partykit info_node
 #' @importFrom grid depth
 
-#' Fit a CERFIT model
+
 #'
 #' @param formula Formula to build CERFIT.  Categorical predictors must be listed as a factor. e.g., Y ~ x1 + x2 | treatment
 #' @param data Data to grwo a tree.
