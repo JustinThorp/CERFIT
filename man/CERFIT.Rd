@@ -8,7 +8,6 @@ CERFIT(
   formula,
   data,
   ntrees,
-  subset = NULL,
   search = c("exhaustive", "sss"),
   method = c("RCT", "observation"),
   PropForm = c("randomForest", "CBPS", "GBM", "HI"),
@@ -29,6 +28,8 @@ CERFIT(
 \item{formula}{Formula to build CERFIT.  Categorical predictors must be listed as a factor. e.g., Y ~ x1 + x2 | treatment}
 
 \item{data}{Data to grow a tree.}
+
+\item{ntrees}{Number of Trees to grow}
 
 \item{search}{Method to search through candidate splits}
 
@@ -53,6 +54,8 @@ CERFIT(
 \item{a}{Sigmoid approximation variable (for "sss" which is still under development)}
 
 \item{sampleMethod}{Method to sample learning sample}
+
+\item{useRes}{Logical indicator if you want to fit the CERFIT model to linear model residuals}
 
 \item{scale.y}{Logical, standardize y when creating splits (For "sss" to increase stability)}
 }

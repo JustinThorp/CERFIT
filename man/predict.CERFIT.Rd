@@ -5,18 +5,19 @@
 \title{Get predictions from a CERFIT object}
 \usage{
 \method{predict}{CERFIT}(
-  cerfit,
+  x,
   data,
   newdata,
   gridval = NULL,
   prediction = c("overall", "by iter"),
   type = c("response", "ITE", "node", "opT"),
   alpha = 0.5,
-  useRse = TRUE
+  useRse = TRUE,
+  ...
 )
 }
 \arguments{
-\item{cerfit}{An object of class CERFIT}
+\item{x}{An object of class CERFIT}
 
 \item{data}{data used to build the tree}
 
@@ -30,7 +31,9 @@
 
 \item{alpha}{something}
 
-\item{seRse}{something}
+\item{useRse}{something}
+
+\item{...}{something}
 }
 \description{
 Get predictions from a CERFIT object

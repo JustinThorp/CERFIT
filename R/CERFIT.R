@@ -20,6 +20,7 @@
 #' @importFrom stats terms
 #' @param formula Formula to build CERFIT.  Categorical predictors must be listed as a factor. e.g., Y ~ x1 + x2 | treatment
 #' @param data Data to grow a tree.
+#' @param ntrees Number of Trees to grow
 #' @param search Method to search through candidate splits
 #' @param method For observational study data, method="observation";for randomized study data, method="RCT".
 #' @param PropForm Method to estimate propensity score
@@ -32,12 +33,13 @@
 #' @param maxdepth Maximum depth of tree
 #' @param a Sigmoid approximation variable (for "sss" which is still under development)
 #' @param sampleMethod Method to sample learning sample
+#' @param useRes Logical indicator if you want to fit the CERFIT model to linear model
 #' @param scale.y Logical, standardize y when creating splits (For "sss" to increase stability)
 #' @return The fitted CERFIT model.
 #' @export
 ### Grows a random forest ###
 # Res is for fitting the residuals
-CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","sss"),
+CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","sss"),
                     method=c("RCT","observation"), PropForm=c("randomForest","CBPS","GBM", "HI"),
                     split=c("t.test"),
                     mtry=NULL, nsplit=NULL, nsplit.random=TRUE, minsplit=20, minbucket=round(minsplit/3), maxdepth=30,

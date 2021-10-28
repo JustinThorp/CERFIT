@@ -1,15 +1,19 @@
 #' Get predictions from a CERFIT object
 #'
-#' @param cerfit An object of class CERFIT
+#' @param x An object of class CERFIT
 #' @param data data used to build the tree
 #' @param newdata new data to make predictions from
 #' @param gridval something that exists
 #' @param prediction Return prediction using all trees ("overall") or using first i trees ("by iter")
 #' @param type Choose what you want ro predict
 #' @param alpha something
-#' @param seRse something
+#' @param useRse something
+#' @param ... something
 #' @export
-predict.CERFIT <- function(cerfit, data,newdata, gridval=NULL, prediction=c("overall","by iter"), type=c("response","ITE","node","opT"), alpha=0.5,useRse=TRUE){
+predict.CERFIT <- function(x,data,newdata, gridval=NULL,
+                           prediction=c("overall","by iter"),
+                           type=c("response","ITE","node","opT"),
+                           alpha=0.5,useRse=TRUE,...){
 
   #Return prediction using all trees ("overall") or using first i trees ("by iter")
   prediction <- match.arg(prediction, c("overall","by iter"))
@@ -21,8 +25,8 @@ predict.CERFIT <- function(cerfit, data,newdata, gridval=NULL, prediction=c("ove
     xTemp[is.na(xTemp)] <- 0
     cumsum(xTemp)/cumsum(!is.na(x))
     }
-  #utrt<- sort(unique(c(fitted(cerfit[[1]]$tree)[,3],fitted(cerfit[[2]]$tree)[,3],fitted(cerfit[[3]]$tree)[,3])))
-  formulaTree <- stats::formula(cerfit[[1]]$tree$terms)
+  #utrt<- sort(unique(c(fitted(x[[1]]$tree)[,3],fitted(x[[2]]$tree)[,3],fitted(x[[3]]$tree)[,3])))
+  formulaTree <- stats::formula(x[[1]]$tree$terms)
   treatment <- all.vars(formulaTree)[length(all.vars(formulaTree))]
   utrt<-sort(unique(data[[treatment]]))
   LB<-min(data[[treatment]])
@@ -50,7 +54,7 @@ predict.CERFIT <- function(cerfit, data,newdata, gridval=NULL, prediction=c("ove
   print(gridval)
 
   if(type!="opT"){
-    predictMat <- lapply(lapply(cerfit, "[[" , "tree"), predictTree, newdata=newdata,gridval=gridval,ntrt=ntrt,type=type,LB=LB,UB=UB,alpha=alpha)
+    predictMat <- lapply(lapply(x, "[[" , "tree"), predictTree, newdata=newdata,gridval=gridval,ntrt=ntrt,type=type,LB=LB,UB=UB,alpha=alpha)
     ypre<- do.call(cbind,predictMat)
     #yp<- lapply(1:ntrt,function(i,k) k[,seq(i, by = ntrt, length = NCOL(ypre) / ntrt)],k=ypre)
     ypre<- lapply(1:ntrt,function(i,k) k[,seq(i, NCOL(ypre), by = ntrt)], k=ypre)
@@ -58,7 +62,7 @@ predict.CERFIT <- function(cerfit, data,newdata, gridval=NULL, prediction=c("ove
     y.pre<-y.pre+ylmp
     #y.pre: by row observation, each column is the corresponding predition for 1 treatment.
   } else{
-    predictMat<-lapply(lapply(cerfit , "[[" , "tree"), predictTree, newdata=newdata,gridval=gridval,ntrt=ntrt,type="opT",  LB=LB,UB=UB,alpha=alpha)
+    predictMat<-lapply(lapply(x , "[[" , "tree"), predictTree, newdata=newdata,gridval=gridval,ntrt=ntrt,type="opT",  LB=LB,UB=UB,alpha=alpha)
     ntrt<-2
     ypre<- do.call(cbind,predictMat)
     ypre<- lapply(1:ntrt,function(i,k) k[,seq(i, NCOL(ypre), by = ntrt)], k=ypre)
@@ -95,7 +99,7 @@ predict.CERFIT <- function(cerfit, data,newdata, gridval=NULL, prediction=c("ove
       Ypre[[i]]<-t(apply(ypre[[i]],1,cumMeanNA))
     }
     cumypre<-t(matrix(unlist(Ypre),ncol=NROW(newdata),byrow = TRUE))
-    ntree<-length(cerfit)
+    ntree<-length(x)
     cumypre.l<- lapply(seq(1,(ntrt*ntree),by=ntree),function(i,k) k[,i:(i+ntree-1)], k=cumypre)
     print(cumypre.l)
     if(type=="response"){
