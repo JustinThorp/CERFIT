@@ -2,18 +2,46 @@
 
 ### Load Functions ###
 #rm(list=ls(all=TRUE))
-library(partykit)
-library(parallel)
-library(pROC)
-library(CBPS)
-library(randomForest)
-library(twang)
-library(glmnet)
-library(sandwich)
-library(Rcpp)
-library(RcppArmadillo)
-sourceCpp("find_split.cpp")
+#library(partykit)
+#library(parallel)
+#library(pROC)
+#library(CBPS)
+#library(randomForest)
+#library(twang)
+#library(glmnet)
+#library(sandwich)
+#library(Rcpp)
+#library(RcppArmadillo)
+##sourceCpp("\\src\\find_split.cpp")
+## usethis namespace: start
+#' @useDynLib CERFIT, .registration = TRUE
+## usethis namespace: end
+## usethis namespace: start
+#' @importFrom Rcpp sourceCpp
+## usethis namespace: end
+#' @importFrom partykit partysplit
+#' @importFrom partykit party
+#' @importFrom partykit partynode
+#' @importFrom partykit kidids_split
+#' @importFrom partykit nodeids
+#' @importFrom partykit fitted_node
+#' @importFrom partykit as.constparty
+#' @importFrom partykit nodeapply
+#' @importFrom partykit split_node
+#' @importFrom partykit info_node
+#' @importFrom grid depth
 
+#' Fit a CERFIT model
+#'
+#' @param formula Formula to build CERFIT.  Categorical predictors must be listed as a factor. e.g., Y ~ x1 + x2 | treatment
+#' @param data Data to grwo a tree.
+#' @param search Method to search throught candidate splits
+#' @param method For observational stuy data, method="observation";for randomized study data, method="RCT".
+#' @return The fitted CERFIT model.
+#' @examples
+#' add(1, 1)
+#' add(10, 1)
+#' @export
 ### Grows a random forest ###
 # Res is for fitting the residuals
 CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","sss"),
@@ -24,9 +52,9 @@ CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","s
                     useRes=TRUE, scale.y=FALSE)#
 {
   sampleMethod <- match.arg(sampleMethod, c('bootstrap','subsample','subsampleByID','learning'))
-  if (missing(formula)) stop("A formula must be supplied.", call. = FALSE) 
-  if (missing(data)) data <- NULL 
-  
+  if (missing(formula)) stop("A formula must be supplied.", call. = FALSE)
+  if (missing(data)) data <- NULL
+
   response <- data[[all.vars(formula)[1]]]
   response.type = "continous"
   if(is.factor(response) & length(levels(response)) == 2){
@@ -51,12 +79,12 @@ CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","s
   print(trtlevels)
   print(paste(trt.type,"Treatment"))
 
-  
+
   if(method=="observation"){
     propformula <- as.formula(paste(all.vars(formula)[length(all.vars(formula))], paste(all.vars(formula)[2:(length(all.vars(formula))-1)], collapse=" + "), sep=" ~ "))
     if(trt.type=="continuous"){
       if(PropForm=="CBPS"){
-        propfun <- CBPS(propformula, data = data[,all.vars(formula)[-1]],ATT=FALSE,method = "exact")# 
+        propfun <- CBPS(propformula, data = data[,all.vars(formula)[-1]],ATT=FALSE,method = "exact")#
         prop <- propfun$fitted.values
         Iptw <- propfun$weights
       } else if(PropForm=="HI") {
@@ -67,16 +95,16 @@ CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","s
         modhi=lm(TrT~1)
         ps.num=dnorm((TrT-modhi$fitted)/(summary(modhi))$sigma,0,1)
         Iptw=ps.num/prop
-      } 
+      }
     } else if(trt.type=="binary") {
       if (PropForm=="GBM") {
         propfun<-ps(propformula,data=data[,all.vars(formula)[-1]],interaction.depth = 4, stop.method = "es.max",estimand="ATE",verbose=FALSE,n.trees = 10000)
         prop<-propfun$ps
         Iptw<-get.weights(propfun,stop.method = "es.max",estimand="ATE")
       } else if (PropForm=="CBPS") {
-        propfun <- CBPS(propformula, data = data[,all.vars(formula)[-1]],ATT=FALSE,method = "exact")# 
+        propfun <- CBPS(propformula, data = data[,all.vars(formula)[-1]],ATT=FALSE,method = "exact")#
         prop <- propfun$fitted.values
-        Iptw <- propfun$weights  
+        Iptw <- propfun$weights
       } else if (PropForm=="randomForest") {
         propfun<- suppressWarnings(randomForest(propformula,data=data[all.vars(formula)[-1]]))
         prop <- propfun$predicted
@@ -87,7 +115,7 @@ CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","s
     } else if (trt.type=="multiple"){
       if(PropForm=="GBM") {
         data[,all.vars(formula)[length(all.vars(formula))]]<-as.factor(data[,all.vars(formula)[length(all.vars(formula))]])
-        propfun<-mnps(propformula,data=data[,all.vars(formula)[-1]],interaction.depth = 4, stop.method = "es.max",estimand="ATE",verbose=FALSE,n.trees = 10000)
+        propfun <- twang::mnps(propformula,data=data[,all.vars(formula)[-1]],interaction.depth = 4, stop.method = "es.max",estimand="ATE",verbose=FALSE,n.trees = 10000)
         pslist<-propfun$psList
         prop<-matrix(NA,ncol=trt.length,nrow=nrow(data))
         for(i in 1:trt.length){
@@ -95,14 +123,14 @@ CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","s
         }
         colnames(prop)<-levels(data[,all.vars(formula)[length(all.vars(formula))]])
         levels(data[,all.vars(formula)[length(all.vars(formula))]])<-c(1:trt.length)
-        Iptw<-get.weights(propfun,stop.method = "es.max",estimand="ATE")
+        Iptw <- twang::get.weights(propfun,stop.method = "es.max",estimand="ATE")
       } else if (PropForm=="CBPS" & trt.length<5 ) {
         data[,all.vars(formula)[length(all.vars(formula))]]<-as.factor(data[,all.vars(formula)[length(all.vars(formula))]])
-        propfun <- CBPS(propformula, data = data[,all.vars(formula)[-1]],ATT=FALSE,method = "exact")# 
+        propfun <- CBPS(propformula, data = data[,all.vars(formula)[-1]],ATT=FALSE,method = "exact")#
         prop <- propfun$fitted.values
         Iptw <- propfun$weights
         levels(data[,all.vars(formula)[length(all.vars(formula))]])<-c(1:trt.length)
-        
+
       }
     } else if(trt.type == "ordered") {
       prop <- matrix(NA,ncol= length(unique(TrT[[1]])),nrow=nrow(data))
@@ -118,7 +146,7 @@ CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","s
                          sep = "~"))
         propfun <- CBPS(propformula_temp,ATT=FALSE,method = "exact",
                         data = data[,all.vars(formula)[c(-1,-length(all.vars(formula)))]])
-        #propfun<- suppressWarnings(randomForest(x = data[all.vars(formula)[-length(all.vars(formula))][-1]], 
+        #propfun<- suppressWarnings(randomForest(x = data[all.vars(formula)[-length(all.vars(formula))][-1]],
         #                                        y = as.factor(TrT_temp)))
         prop[,i] <- propfun$fitted.values
         i <- i + 1
@@ -165,5 +193,5 @@ CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","s
   class(randFor) <- "CERFIT"
   return(randFor)
 }
-# Having issues in mutiple treatment where in partition only a single treatment 
+# Having issues in mutiple treatment where in partition only a single treatment
 # is present in the data

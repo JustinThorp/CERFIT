@@ -1,10 +1,11 @@
-predict.CERFIT <- function(cerfit, data,newdata, gridval=NULL, prediction=c("overall","by iter"), type=c("response","ITE","node","opT"), alpha=0.5,useRse=TRUE){ 
-  
+#' @export
+predict.CERFIT <- function(cerfit, data,newdata, gridval=NULL, prediction=c("overall","by iter"), type=c("response","ITE","node","opT"), alpha=0.5,useRse=TRUE){
+
   #Return prediction using all trees ("overall") or using first i trees ("by iter")
   prediction <- match.arg(prediction, c("overall","by iter"))
-  
+
   type <- match.arg(type, c("response","ITE","node","opT"))
-  
+
   cumMeanNA <- function(x){
     xTemp<-x;
     xTemp[is.na(xTemp)] <- 0
@@ -33,13 +34,13 @@ predict.CERFIT <- function(cerfit, data,newdata, gridval=NULL, prediction=c("ove
     gridval<-utrt
   } else if(is.null(gridval)) { # if more than 20, and gridval is null, use percentiles at 5% increment
     gridval<-quantile(utrt, prob = seq(0, 1, length = 21))
-    ntrt<-length(gridval)-1 
+    ntrt<-length(gridval)-1
   } else {
     ntrt<-length(gridval)}
   print(gridval)
-  
+
   if(type!="opT"){
-    predictMat<-lapply(lapply(cerfit, "[[" , "tree"), predictTree, newdata=newdata,gridval=gridval,ntrt=ntrt,type=type,LB=LB,UB=UB,alpha=alpha)
+    predictMat <- lapply(lapply(cerfit, "[[" , "tree"), predictTree, newdata=newdata,gridval=gridval,ntrt=ntrt,type=type,LB=LB,UB=UB,alpha=alpha)
     ypre<- do.call(cbind,predictMat)
     #yp<- lapply(1:ntrt,function(i,k) k[,seq(i, by = ntrt, length = NCOL(ypre) / ntrt)],k=ypre)
     ypre<- lapply(1:ntrt,function(i,k) k[,seq(i, NCOL(ypre), by = ntrt)], k=ypre)
@@ -57,16 +58,16 @@ predict.CERFIT <- function(cerfit, data,newdata, gridval=NULL, prediction=c("ove
     t.opt<-rowMeans(topt)
     y.pre<- cbind(t.opt,y.opt)
   }
-  
+
   yname<-NA
   if (prediction=="overall") {
     if(type=="response") {
       resp <- y.pre
-      yname<- paste("y=",gridval,sep="") 
+      yname<- paste("y=",gridval,sep="")
       colnames(resp) <- yname
       return(resp)}
     if(type=="ITE") { #using the first level or smallest value as reference group
-      yname<-paste("y",utrt,"-y",utrt[1],sep="") 
+      yname<-paste("y",utrt,"-y",utrt[1],sep="")
       ite<- y.pre-y.pre[,1]
       colnames(ite) <- c(yname)
       return(ite[,-1])
@@ -88,18 +89,18 @@ predict.CERFIT <- function(cerfit, data,newdata, gridval=NULL, prediction=c("ove
     cumypre.l<- lapply(seq(1,(ntrt*ntree),by=ntree),function(i,k) k[,i:(i+ntree-1)], k=cumypre)
     print(cumypre.l)
     if(type=="response"){
-      yname<-paste("ycum",utrt,sep="") 
-      names(cumypre.l) <- yname  
+      yname<-paste("ycum",utrt,sep="")
+      names(cumypre.l) <- yname
       return(cumypre.l)}
     if(type=="ITE")  {
       cumite<-as.list(NA)
       for(i in 1:ntrt){
-        cumite[[i]]<- cumypre.l[[i]]-cumypre.l[[1]]  
+        cumite[[i]]<- cumypre.l[[i]]-cumypre.l[[1]]
       }
-      yname<-paste("ycum",utrt,"-ycum",utrt[1],sep="") 
+      yname<-paste("ycum",utrt,"-ycum",utrt[1],sep="")
       names(cumite)<-yname
       print(yname)
       return(cumite[[-1]])
     }}
-  
+
 }
