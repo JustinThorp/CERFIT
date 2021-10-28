@@ -3,6 +3,7 @@
 S3method(predict,CERFIT)
 S3method(print,CERFIT)
 export(CERFIT)
+export(MinDepth)
 export(find_split)
 importFrom(Rcpp,sourceCpp)
 importFrom(grid,depth)

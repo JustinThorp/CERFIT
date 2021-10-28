@@ -1,3 +1,4 @@
+#' @export
 MinDepth <- function(cerfit){  # need to given number of levels if observation
   Term<-cerfit[[1]]$tree$terms
   dataTemp<-all.vars(Term[[3]])

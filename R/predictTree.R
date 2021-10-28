@@ -60,7 +60,7 @@ predictTree <- function(tree, newdata=tree$data, gridval, LB, UB, ntrt,type="res
               opTrt <- fit.tmp$maximum
             }
           } }
-        return(cbind(top,yop))}
+        return(cbind(opTrt,opY))}
     })
     nodepred<- cbind(ufit,matrix(unlist(pred), ncol = length(pred[[1]]), byrow = TRUE))
   }

@@ -95,7 +95,7 @@ CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","s
         sigm <- summary(propfun)$sigma
         prop <- stats::dnorm(TrT,prt,sigm)
         modhi = stats::lm(TrT~1)
-        ps.num=dnorm((TrT-modhi$fitted)/(summary(modhi))$sigma,0,1)
+        ps.num = stats::dnorm((TrT-modhi$fitted)/(summary(modhi))$sigma,0,1)
         Iptw=ps.num/prop
       }
     } else if(trt.type=="binary") {
@@ -182,9 +182,9 @@ CERFIT <- function( formula, data, ntrees, subset=NULL, search=c("exhaustive","s
     obs.b <- switch(sampleMethod,
                     bootstrap = sample.int(nrow(data), size=nrow(data), replace=TRUE, prob=data$iptw), #inverse weighting in boostrapping
                     subsample = sample.int(nrow(data), size=round(nrow(data)*0.632), replace=FALSE,prob=data$iptw), # stratified sampling
-                    subsampleByID = {nIds <- length(unique(data[[idVar]]))
-                    unlist(lapply(sample(unique(data[[idVar]]), size=round(nIds*0.632), replace=FALSE),
-                                  function(x){which(data[[idVar]] == x)}))},
+                    #subsampleByID = {nIds <- length(unique(data[[idVar]]))
+                    #unlist(lapply(sample(unique(data[[idVar]]), size=round(nIds*0.632), replace=FALSE),
+                    #              function(x){which(data[[idVar]] == x)}))},
                     learning = 1:nrow(data))
     sample.b <- data[obs.b,]
     tree.b <- growTree(formula=formula, data=sample.b, subset=subset, search=search, method=method, split=split,
