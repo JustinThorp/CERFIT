@@ -33,14 +33,32 @@ CERFIT(
 \item{search}{Method to search throught candidate splits}
 
 \item{method}{For observational stuy data, method="observation";for randomized study data, method="RCT".}
+
+\item{PropForm}{Method to estimate propensity score}
+
+\item{split}{Impurity measure splitting statistic}
+
+\item{mtry}{Number of varialbes to consider at each split}
+
+\item{nsplit}{Number of cut points selected}
+
+\item{nsplit.random}{Logical: indicates if process to select cutpts are random}
+
+\item{minsplit}{Number of observations required to continue growing tree}
+
+\item{minbucket}{Number of observations required in each child node}
+
+\item{maxdepth}{Maximum depth of tree}
+
+\item{a}{Sigmoid approximation variable (for "sss" which is still under development)}
+
+\item{sampleMethod}{Method to sample learning sample}
+
+\item{scale.y}{Logical, standardize y when creating splits (For "sss" to increase stability)}
 }
 \value{
 The fitted CERFIT model.
 }
 \description{
 Fits a Causal Effect Random Forest of Interactions Trees
-}
-\examples{
-add(1, 1)
-add(10, 1)
 }

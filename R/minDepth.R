@@ -1,3 +1,6 @@
+#' Calculate Variable Importance
+#'
+#' @param cerfit An object of class CERFIT
 #' @export
 MinDepth <- function(cerfit){  # need to given number of levels if observation
   Term<-cerfit[[1]]$tree$terms

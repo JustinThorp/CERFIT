@@ -1,7 +1,7 @@
 #' @export
-print.CERFIT <- function(cerfit){
-  cat(paste("Numer of Trees:",length(cerfit),"\n"))
-  cat(paste("Treatment Type:",cerfit[[1]]$trt.type))
+print.CERFIT <- function(x,...){
+  cat(paste("Numer of Trees:",length(x),"\n"))
+  cat(paste("Treatment Type:",x[[1]]$trt.type))
 }
 # CapStr <- function(y) {
 #   c <- strsplit(y, " ")[[1]]

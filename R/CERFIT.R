@@ -1,18 +1,4 @@
-# Functions ---------------
-
-### Load Functions ###
-#rm(list=ls(all=TRUE))
-#library(partykit)
-#library(parallel)
-#library(pROC)
-#library(CBPS)
-#library(randomForest)
-#library(twang)
-#library(glmnet)
-#library(sandwich)
-#library(Rcpp)
-#library(RcppArmadillo)
-##sourceCpp("\\src\\find_split.cpp")
+#' Fits a Causal Effect Random Forest of Interactions Trees
 ## usethis namespace: start
 #' @useDynLib CERFIT, .registration = TRUE
 ## usethis namespace: end
@@ -32,17 +18,22 @@
 #' @importFrom grid depth
 #' @importFrom stats complete.cases
 #' @importFrom stats terms
-
-
-#'
 #' @param formula Formula to build CERFIT.  Categorical predictors must be listed as a factor. e.g., Y ~ x1 + x2 | treatment
 #' @param data Data to grwo a tree.
 #' @param search Method to search throught candidate splits
 #' @param method For observational stuy data, method="observation";for randomized study data, method="RCT".
+#' @param PropForm Method to estimate propensity score
+#' @param split Impurity measure splitting statistic
+#' @param mtry Number of varialbes to consider at each split
+#' @param nsplit Number of cut points selected
+#' @param nsplit.random Logical: indicates if process to select cutpts are random
+#' @param minsplit Number of observations required to continue growing tree
+#' @param minbucket Number of observations required in each child node
+#' @param maxdepth Maximum depth of tree
+#' @param a Sigmoid approximation variable (for "sss" which is still under development)
+#' @param sampleMethod Method to sample learning sample
+#' @param scale.y Logical, standardize y when creating splits (For "sss" to increase stability)
 #' @return The fitted CERFIT model.
-#' @examples
-#' add(1, 1)
-#' add(10, 1)
 #' @export
 ### Grows a random forest ###
 # Res is for fitting the residuals

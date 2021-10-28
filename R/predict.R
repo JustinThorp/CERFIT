@@ -1,3 +1,13 @@
+#' Get predictions from a CERFIT object
+#'
+#' @param cerfit An object of class CERFIT
+#' @param data data used to build the tree
+#' @param newdata new data to make predictions from
+#' @param gridval something that exists
+#' @param prediction Return prediction using all trees ("overall") or using first i trees ("by iter")
+#' @param type Choose what you want ro predict
+#' @param alpha something
+#' @param seRse something
 #' @export
 predict.CERFIT <- function(cerfit, data,newdata, gridval=NULL, prediction=c("overall","by iter"), type=c("response","ITE","node","opT"), alpha=0.5,useRse=TRUE){
 

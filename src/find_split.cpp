@@ -10,10 +10,7 @@ arma::mat bread;
 arma::mat meat;
 NumericVector min_z_split;
 
-//' Multiply a number by two
-//'
-//' @param x A single integer.
-//' @export
+
 // [[Rcpp::export]]
 List find_split(const arma::vec &y,const arma::vec &x,const arma::vec &trt, //arma::mat z_mat,
 const NumericVector &cutpts,String method,arma::vec propensity, double minbucket, String response_type) {

@@ -30,7 +30,7 @@
 
 \item{alpha}{something}
 
-\item{UseRes}{something}
+\item{seRse}{something}
 }
 \description{
 Get predictions from a CERFIT object
