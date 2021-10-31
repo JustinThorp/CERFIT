@@ -8,6 +8,7 @@ CERFIT(
   formula,
   data,
   ntrees,
+  subset = NULL,
   search = c("exhaustive", "sss"),
   method = c("RCT", "observation"),
   PropForm = c("randomForest", "CBPS", "GBM", "HI"),
@@ -55,7 +56,7 @@ CERFIT(
 
 \item{sampleMethod}{Method to sample learning sample}
 
-\item{useRes}{Logical indicator if you want to fit the CERFIT model to linear model residuals}
+\item{useRes}{Logical indicator if you want to fit the CERFIT model to linear model}
 
 \item{scale.y}{Logical, standardize y when creating splits (For "sss" to increase stability)}
 }

@@ -150,14 +150,14 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
       prop <- as.data.frame(prop)[,colSums(is.na(prop)) == 0]
       names(prop) <- TrT_splits[!is.na(TrT_splits)]
       #data[,all.vars(formula)[length(all.vars(formula))]]<-as.factor(as.numeric(data[,all.vars(formula)[length(all.vars(formula))]]))
-      print(class(data[,all.vars(formula)[length(all.vars(formula))]]))
+      #print(class(data[,all.vars(formula)[length(all.vars(formula))]]))
       propfun <- twang::mnps(propformula,data=data[,all.vars(formula)[-1]],interaction.depth = 4,
                     stop.method = "es.max",estimand="ATE",verbose=FALSE,n.trees = 10000)
       Iptw <- twang::get.weights(propfun,stop.method = "es.max",estimand="ATE")
       #Iptw<- rep(1,nrow(data))
       #Iptw <- sum(TrT)/length(TrT)*TrT/prop+sum(1-TrT)/length(TrT)*(1-TrT)/(1-prop)
       #Iptw <-TrT/prop+(1-TrT)/(1-prop)
-      Iptw <- truncquant(Iptw[[1]],q=0.9)
+      Iptw <- truncquant(Iptw,q=0.9)
     }  else stop("Please specify a propensity score method: randomForest or CBPS or GBM", call. = FALSE)
   } else if (method=="RCT") {
     prop <- rep(1,nrow(data))#rep("none",nrow(data)) # for observational no prop need
