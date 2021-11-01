@@ -58,11 +58,19 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
   }
   print(paste(response.type,"response"))
   if(useRes){
-    resformula<- stats::as.formula(paste(all.vars(formula)[1], paste(all.vars(formula)[2:(length(all.vars(formula))-1)], collapse=" + "), sep=" ~ "))
-    reslm <- stats::lm(resformula,data)
-    eres <- stats::resid(reslm)
-    data$yo <- data[[all.vars(formula)[1]]]
-    data[[all.vars(formula)[1]]] <- eres
+    if (response.type == "binary") {
+      resformula<- stats::as.formula(paste(all.vars(formula)[1], paste(all.vars(formula)[2:(length(all.vars(formula))-1)], collapse=" + "), sep=" ~ "))
+      reslm <- stats::glm(resformula,data,family = binomial)
+      eres <- stats::resid(reslm)
+      data$yo <- data[[all.vars(formula)[1]]]
+      data[[all.vars(formula)[1]]] <- eres
+    } else {
+      resformula<- stats::as.formula(paste(all.vars(formula)[1], paste(all.vars(formula)[2:(length(all.vars(formula))-1)], collapse=" + "), sep=" ~ "))
+      reslm <- stats::lm(resformula,data)
+      eres <- stats::resid(reslm)
+      data$yo <- data[[all.vars(formula)[1]]]
+      data[[all.vars(formula)[1]]] <- eres
+    }
   }
   TrT <- data[all.vars(formula)[length(all.vars(formula))]]
   trt.length<-nrow(unique(TrT))
