@@ -12,15 +12,15 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // find_split
-List find_split(const arma::vec& y, const arma::vec& x, const arma::vec& trt, const NumericVector& cutpts, String method, arma::vec propensity, double minbucket, String response_type);
+List find_split(const arma::vec y, const arma::vec x, const arma::vec trt, const NumericVector cutpts, String method, arma::vec propensity, double minbucket, String response_type);
 RcppExport SEXP _CERFIT_find_split(SEXP ySEXP, SEXP xSEXP, SEXP trtSEXP, SEXP cutptsSEXP, SEXP methodSEXP, SEXP propensitySEXP, SEXP minbucketSEXP, SEXP response_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type trt(trtSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type cutpts(cutptsSEXP);
+    Rcpp::traits::input_parameter< const arma::vec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::vec >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const arma::vec >::type trt(trtSEXP);
+    Rcpp::traits::input_parameter< const NumericVector >::type cutpts(cutptsSEXP);
     Rcpp::traits::input_parameter< String >::type method(methodSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type propensity(propensitySEXP);
     Rcpp::traits::input_parameter< double >::type minbucket(minbucketSEXP);
