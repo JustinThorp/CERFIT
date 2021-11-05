@@ -85,7 +85,28 @@ const NumericVector cutpts,String method,arma::vec propensity, double minbucket,
         score(i) = -1;//NA_REAL;
       } else {
         if (response_type == "binary") {
-          score(i) = 5.0;//lm_rand(y,z,trt); //Need to make a glm function
+          x_lm.col(1) = z;
+          x_lm.col(3) = z % trt;
+          try {
+            x_t = x_lm.t();
+            bread = (x_t * x_lm).i();
+            //bread = arma::inv_sympd(x_t * x_lm);
+            beta = bread*x_t*y;//arma::solve(x_lm,y,solve_opts::fast);
+            res = y - x_lm * beta;
+            //double sigma = var(res);
+            //meat = x_t.each_row() % (res % res).t() * x_lm;
+            meat = x_t * arma::diagmat(res % res) * x_lm;
+            se_mat = bread * meat * bread;
+            double top = arma::as_scalar(beta(3,0) * beta(3,0));
+            double bottom = arma::as_scalar(se_mat(3,3));
+            if (bottom < .00000001) {
+              score(i) = -1;
+            } else {
+              score(i) = top / bottom;
+            }
+          } catch(...) {
+            score(i) = -1;
+          }//lm_rand(y,z,trt); //Need to make a glm function
         } else {
           x_lm.col(1) = z;
           x_lm.col(3) = z % trt;
