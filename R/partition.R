@@ -5,7 +5,7 @@ partition<- function(vars, y, trt, propensity, subset, search, method, split, ns
   y <- y[subset]
   trt<- trt[subset]
   if (length(unique(trt)) < 2) {return(NULL)}
-  if(length(trtlevels)>2 & length(trtlevels<10) & method != "RCT") { #& !is.ordered(trt)) {
+  if(length(trtlevels) > 2 & length(trtlevels<10) & method != "RCT") { #& !is.ordered(trt)) {
     propensity <- propensity[subset,]
   } else {
     propensity <- propensity[subset]
