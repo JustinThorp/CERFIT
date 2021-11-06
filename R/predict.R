@@ -13,7 +13,7 @@
 predict.CERFIT <- function(x,data,newdata, gridval=NULL,
                            prediction=c("overall","by iter"),
                            type=c("response","ITE","node","opT"),
-                           alpha=0.5,useRse=TRUE,...){
+                           alpha=0.5,useRse=FALSE,...){
 
   #Return prediction using all trees ("overall") or using first i trees ("by iter")
   prediction <- match.arg(prediction, c("overall","by iter"))
@@ -40,6 +40,7 @@ predict.CERFIT <- function(x,data,newdata, gridval=NULL,
     resformula <-  stats::as.formula(paste(all.vars(formulaTree)[1], paste(all.vars(formulaTree)[2:(length(all.vars(formulaTree))-1)], collapse=" + "), sep=" ~ "))
     reslm <- stats::lm(resformula,data)
     ylmp <- stats::predict(reslm,newdata)
+    print("WHAT")
   } else {
     ylmp<-rep(0,nrow(newdata))
   }
