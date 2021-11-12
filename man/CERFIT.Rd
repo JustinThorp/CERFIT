@@ -32,6 +32,8 @@ CERFIT(
 
 \item{ntrees}{Number of Trees to grow}
 
+\item{subset}{thing}
+
 \item{search}{Method to search through candidate splits}
 
 \item{method}{For observational study data, method="observation";for randomized study data, method="RCT".}

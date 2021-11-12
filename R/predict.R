@@ -1,21 +1,22 @@
 #' Get predictions from a CERFIT object
 #'
-#' @param x An object of class CERFIT
-#' @param data data used to build the tree
-#' @param newdata new data to make predictions from
-#' @param gridval something that exists
+#' @param object An object of class CERFIT
+#' @param data Sata used to build the tree
+#' @param newdata New data to make predictions from
+#' @param gridval For continuous treatment. Controls for what values of treatment to predict
 #' @param prediction Return prediction using all trees ("overall") or using first i trees ("by iter")
 #' @param type Choose what you want ro predict
 #' @param alpha something
-#' @param useRse something
-#' @param ... something
+#' @param useRse THis will be removed
+#' @param ... Additional Arguments
 #' @export
-predict.CERFIT <- function(x,data,newdata, gridval=NULL,
+predict.CERFIT <- function(object,data,newdata, gridval=NULL,
                            prediction=c("overall","by iter"),
                            type=c("response","ITE","node","opT"),
                            alpha=0.5,useRse=FALSE,...){
 
   #Return prediction using all trees ("overall") or using first i trees ("by iter")
+  x <- object
   prediction <- match.arg(prediction, c("overall","by iter"))
 
   type <- match.arg(type, c("response","ITE","node","opT"))

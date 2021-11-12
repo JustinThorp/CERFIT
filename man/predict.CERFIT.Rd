@@ -5,25 +5,25 @@
 \title{Get predictions from a CERFIT object}
 \usage{
 \method{predict}{CERFIT}(
-  x,
+  object,
   data,
   newdata,
   gridval = NULL,
   prediction = c("overall", "by iter"),
   type = c("response", "ITE", "node", "opT"),
   alpha = 0.5,
-  useRse = TRUE,
+  useRse = FALSE,
   ...
 )
 }
 \arguments{
-\item{x}{An object of class CERFIT}
+\item{object}{An object of class CERFIT}
 
-\item{data}{data used to build the tree}
+\item{data}{Sata used to build the tree}
 
-\item{newdata}{new data to make predictions from}
+\item{newdata}{New data to make predictions from}
 
-\item{gridval}{something that exists}
+\item{gridval}{For continuous treatment. Controls for what values of treatment to predict}
 
 \item{prediction}{Return prediction using all trees ("overall") or using first i trees ("by iter")}
 
@@ -31,9 +31,9 @@
 
 \item{alpha}{something}
 
-\item{useRse}{something}
+\item{useRse}{THis will be removed}
 
-\item{...}{something}
+\item{...}{Additional Arguments}
 }
 \description{
 Get predictions from a CERFIT object

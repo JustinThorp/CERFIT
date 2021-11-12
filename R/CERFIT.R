@@ -21,6 +21,7 @@
 #' @param formula Formula to build CERFIT.  Categorical predictors must be listed as a factor. e.g., Y ~ x1 + x2 | treatment
 #' @param data Data to grow a tree.
 #' @param ntrees Number of Trees to grow
+#' @param subset thing
 #' @param search Method to search through candidate splits
 #' @param method For observational study data, method="observation";for randomized study data, method="RCT".
 #' @param PropForm Method to estimate propensity score
@@ -60,7 +61,7 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
   if(useRes){
     if (response.type == "binary") {
       resformula<- stats::as.formula(paste(all.vars(formula)[1], paste(all.vars(formula)[2:(length(all.vars(formula))-1)], collapse=" + "), sep=" ~ "))
-      reslm <- stats::glm(resformula,data,family = binomial)
+      reslm <- stats::glm(resformula,data,family = stats::binomial)
       eres <- stats::resid(reslm)
       data$yo <- data[[all.vars(formula)[1]]]
       data[[all.vars(formula)[1]]] <- eres
