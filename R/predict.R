@@ -15,19 +15,17 @@ predict.CERFIT <- function(object,data,newdata, gridval=NULL,
                            type=c("response","ITE","node","opT"),
                            alpha=0.5,useRse=FALSE,...){
 
-  #Return prediction using all trees ("overall") or using first i trees ("by iter")
-  x <- object
+  #Return prediction using all trees ("overall") or using first i trees ("by iter")S
   prediction <- match.arg(prediction, c("overall","by iter"))
 
   type <- match.arg(type, c("response","ITE","node","opT"))
-
   cumMeanNA <- function(x){
     xTemp<-x;
     xTemp[is.na(xTemp)] <- 0
     cumsum(xTemp)/cumsum(!is.na(x))
     }
   #utrt<- sort(unique(c(fitted(x[[1]]$tree)[,3],fitted(x[[2]]$tree)[,3],fitted(x[[3]]$tree)[,3])))
-  formulaTree <- stats::formula(x[[1]]$tree$terms)
+  formulaTree <- stats::formula(object[[1]]$tree$terms)
   treatment <- all.vars(formulaTree)[length(all.vars(formulaTree))]
   utrt<-sort(unique(data[[treatment]]))
   LB<-min(data[[treatment]])
@@ -56,7 +54,7 @@ predict.CERFIT <- function(object,data,newdata, gridval=NULL,
   print(gridval)
 
   if(type!="opT"){
-    predictMat <- lapply(lapply(x, "[[" , "tree"), predictTree, newdata=newdata,gridval=gridval,ntrt=ntrt,type=type,LB=LB,UB=UB,alpha=alpha)
+    predictMat <- lapply(lapply(object, "[[" , "tree"), predictTree, newdata=newdata,gridval=gridval,ntrt=ntrt,type=type,LB=LB,UB=UB,alpha=alpha)
     ypre<- do.call(cbind,predictMat)
     #yp<- lapply(1:ntrt,function(i,k) k[,seq(i, by = ntrt, length = NCOL(ypre) / ntrt)],k=ypre)
     ypre<- lapply(1:ntrt,function(i,k) k[,seq(i, NCOL(ypre), by = ntrt)], k=ypre)
@@ -64,7 +62,7 @@ predict.CERFIT <- function(object,data,newdata, gridval=NULL,
     y.pre<-y.pre+ylmp
     #y.pre: by row observation, each column is the corresponding predition for 1 treatment.
   } else{
-    predictMat<-lapply(lapply(x , "[[" , "tree"), predictTree, newdata=newdata,gridval=gridval,ntrt=ntrt,type="opT",  LB=LB,UB=UB,alpha=alpha)
+    predictMat<-lapply(lapply(object , "[[" , "tree"), predictTree, newdata=newdata,gridval=gridval,ntrt=ntrt,type="opT",  LB=LB,UB=UB,alpha=alpha)
     ntrt<-2
     ypre<- do.call(cbind,predictMat)
     ypre<- lapply(1:ntrt,function(i,k) k[,seq(i, NCOL(ypre), by = ntrt)], k=ypre)

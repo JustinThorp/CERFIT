@@ -16,7 +16,6 @@ LinkingTo:
 Imports: 
     pROC,
     partykit,
-    Rcpp,
     CBPS,
     randomForest,
     twang,
