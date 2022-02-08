@@ -3,6 +3,7 @@
 #' @param cerfit An object of class CERFIT
 #' @export
 MinDepth <- function(cerfit){  # need to given number of levels if observation
+  cerfit <- cerfit$randFor
   Term<-cerfit[[1]]$tree$terms
   dataTemp<-all.vars(Term[[3]])
   vars<-dataTemp[-length(dataTemp)]
