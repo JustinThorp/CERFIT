@@ -1,11 +1,12 @@
 #' Get predictions from a CERFIT object
 #'
 #' @param object An object of class CERFIT
-#' @param data Sata used to build the tree
 #' @param newdata New data to make predictions from
 #' @param gridval For continuous treatment. Controls for what values of treatment to predict
 #' @param prediction Return prediction using all trees ("overall") or using first i trees ("by iter")
-#' @param type Choose what you want to predict
+#' @param type Choose what value you wish to predict. Response will predict the repsone.
+#' ITE will predict the Individialzed treatment effect. Node will predcit the node. And opT
+#' will predict the optimal treatment for each observation.
 #' @param alpha something
 #' @param ... Additional Arguments
 #' @return A named vector where the values are the average minimum depth for each variable

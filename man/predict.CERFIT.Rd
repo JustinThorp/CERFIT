@@ -6,20 +6,16 @@
 \usage{
 \method{predict}{CERFIT}(
   object,
-  data,
-  newdata,
+  newdata = object$data,
   gridval = NULL,
   prediction = c("overall", "by iter"),
   type = c("response", "ITE", "node", "opT"),
   alpha = 0.5,
-  useRse = FALSE,
   ...
 )
 }
 \arguments{
 \item{object}{An object of class CERFIT}
-
-\item{data}{Sata used to build the tree}
 
 \item{newdata}{New data to make predictions from}
 
@@ -27,13 +23,13 @@
 
 \item{prediction}{Return prediction using all trees ("overall") or using first i trees ("by iter")}
 
-\item{type}{Choose what you want ro predict}
+\item{type}{Choose what you want to predict}
 
 \item{alpha}{something}
 
-\item{useRse}{THis will be removed}
-
 \item{...}{Additional Arguments}
+
+\item{data}{Sata used to build the tree}
 }
 \value{
 A named vector where the values are the average minimum depth for each variable
