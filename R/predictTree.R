@@ -9,7 +9,7 @@ predictTree <- function(tree, newdata=tree$data, gridval, LB, UB, ntrt,type="res
   #if (ntrt<=10){ #for binary and multiple trt, ignore gridval
   if(ntrt<=10){
     pred<- lapply(split(da ,list(da[["(fitted)"]],da[,3])), function(da){
-      ytemp<-try(stats::weighted.mean(da[,2],da[,length(da)],na.rm=T)) #This is only using the first propensity (fixed)
+      ytemp<-try(stats::weighted.mean(da[,2],da[,length(da)],na.rm=T))#This is only using the first propensity (fixed)
       if(inherits(ytemp,"try-error")) {
         return(NA)
         } else {

@@ -195,7 +195,8 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
   })
   object <- list(randFor = randFor,trt.type = trt.type,
                  response.type = response.type,
-                 useRes = useRes)
+                 useRes = useRes,
+                 data = data)
   class(object) <- "CERFIT"
   return(object)
 }

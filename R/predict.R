@@ -11,7 +11,7 @@
 #' @return A named vector where the values are the average minimum depth for each variable
 #' and the names are the associated variable names
 #' @export
-predict.CERFIT <- function(object,data,newdata, gridval=NULL,
+predict.CERFIT <- function(object,newdata = object$data, gridval=NULL,
                            prediction=c("overall","by iter"),
                            type=c("response","ITE","node","opT"),
                            alpha=0.5,...){
@@ -19,6 +19,8 @@ predict.CERFIT <- function(object,data,newdata, gridval=NULL,
   #Return prediction using all trees ("overall") or using first i trees ("by iter")S
   prediction <- match.arg(prediction, c("overall","by iter"))
   useRse <- object$useRes
+  data <- object$data
+  temp <- newdata # This does nothing but it wont work without it
   response.type <- object$response.type
   object <- object$randFor
   type <- match.arg(type, c("response","ITE","node","opT"))
