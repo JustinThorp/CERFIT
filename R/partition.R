@@ -13,7 +13,7 @@ partition<- function(vars, y, trt, propensity, subset, search, method, split, ns
   trt.length<-length(trtlevels)
   if (is.ordered(trt)) {
     # Chosses the split point for ordered treatment
-    ran <- sample(1:(length(propensity)-1),1)
+    ran <- sample(1:(length(propensity)),1)
     propensity <- propensity[,ran]
     trt <- ifelse(trt <= ran,0,1)
   } else if (trt.length>2 & trt.length < 10) {

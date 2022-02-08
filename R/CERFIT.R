@@ -139,30 +139,15 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
       }
     } else if(trt.type == "ordered") {
       prop <- matrix(NA,ncol= length(unique(TrT[[1]])),nrow=nrow(data))
-      order_length <- seq(0,length(unique(TrT[[1]])))
-      i <- 1
-      TrT_splits <- rep(NA,length(order_length))
-      for (TrT_split in order_length){
-        TrT_temp <- TrT[[1]] <= TrT_split
-        if (length(unique(TrT_temp)) == 1) next else TrT_splits[i] <- TrT_split
-        propformula_temp <- stats::as.formula(paste("TrT_temp",
-                         paste(all.vars(formula)[2:(length(all.vars(formula))-1)],
-                               collapse = "+"),
-                         sep = "~"))
-        propfun <- CBPS::CBPS(propformula_temp,ATT=FALSE,method = "exact",
-                        data = data[,all.vars(formula)[c(-1,-length(all.vars(formula)))]])
-        #propfun<- suppressWarnings(randomForest(x = data[all.vars(formula)[-length(all.vars(formula))][-1]],
-        #                                        y = as.factor(TrT_temp)))
-        prop[,i] <- propfun$fitted.values
-        i <- i + 1
-      }
-      #data[,all.vars(formula)[length(all.vars(formula))]] <- as.factor(as.numeric(data[,all.vars(formula)[length(all.vars(formula))]]))
-      prop <- as.data.frame(prop)[,colSums(is.na(prop)) == 0]
-      names(prop) <- TrT_splits[!is.na(TrT_splits)]
-      #data[,all.vars(formula)[length(all.vars(formula))]]<-as.factor(as.numeric(data[,all.vars(formula)[length(all.vars(formula))]]))
-      #print(class(data[,all.vars(formula)[length(all.vars(formula))]]))
       propfun <- twang::mnps(propformula,data=data[,all.vars(formula)[-1]],interaction.depth = 4,
-                    stop.method = "es.max",estimand="ATE",verbose=FALSE,n.trees = 10000)
+                             stop.method = "es.max",estimand="ATE",verbose=FALSE,n.trees = 10000)
+      pslist <- propfun$psList
+      for(i in 1:length(unique(TrT[[1]]))){
+        prop[,i]<-unlist(pslist[[i]]$ps)
+      }
+      prop <- t(apply(prop, 1, cumsum))
+      prop <- as.data.frame(prop)[,colSums(is.na(prop)) == 0]
+      #names(prop) <- TrT_splits[!is.na(TrT_splits)]
       Iptw <- twang::get.weights(propfun,stop.method = "es.max",estimand="ATE")
       #Iptw<- rep(1,nrow(data))
       #Iptw <- sum(TrT)/length(TrT)*TrT/prop+sum(1-TrT)/length(TrT)*(1-TrT)/(1-prop)
