@@ -35,6 +35,10 @@
 
 \item{...}{Additional Arguments}
 }
+\value{
+A named vector where the values are the average minimum depth for each variable
+and the names are the associated variable names
+}
 \description{
 Get predictions from a CERFIT object
 }

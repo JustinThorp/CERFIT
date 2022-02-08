@@ -50,7 +50,6 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
   sampleMethod <- match.arg(sampleMethod, c('bootstrap','subsample','subsampleByID','learning'))
   if (missing(formula)) stop("A formula must be supplied.", call. = FALSE)
   if (missing(data)) data <- NULL
-
   response <- data[[all.vars(formula)[1]]]
   response.type = "continous"
   if(is.factor(response) & length(levels(response)) == 2){
@@ -62,7 +61,7 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
     if (response.type == "binary") {
       resformula<- stats::as.formula(paste(all.vars(formula)[1], paste(all.vars(formula)[2:(length(all.vars(formula))-1)], collapse=" + "), sep=" ~ "))
       reslm <- stats::glm(resformula,data,family = stats::binomial)
-      eres <- stats::resid(reslm)
+      eres <- (as.numeric(data[[all.vars(formula)[1]]]) - 1) - stats::fitted(reslm)
       data$yo <- data[[all.vars(formula)[1]]]
       data[[all.vars(formula)[1]]] <- eres
     } else {
@@ -192,10 +191,13 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
     tree.b <- growTree(formula=formula, data=sample.b, subset=subset, search=search, method=method, split=split,
                        mtry=mtry, nsplit=nsplit, nsplit.random=nsplit.random, minsplit=minsplit, minbucket=minbucket, maxdepth=maxdepth, a=a,
                        scale.y=scale.y, useRes=useRes, trtlevels=trtlevels,response.type = response.type)#, useRpart=useRpart, minpvalue=minpvalue, corstr=corstr)
-    list(tree=tree.b,cases=sort(unique(obs.b)),trt.type = trt.type)
+    list(tree=tree.b,cases=sort(unique(obs.b)))
   })
-  class(randFor) <- "CERFIT"
-  return(randFor)
+  object <- list(randFor = randFor,trt.type = trt.type,
+                 response.type = response.type,
+                 useRes = useRes)
+  class(object) <- "CERFIT"
+  return(object)
 }
 # Having issues in mutiple treatment where in partition only a single treatment
 # is present in the data

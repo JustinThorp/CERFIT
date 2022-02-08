@@ -5,19 +5,22 @@
 #' @param newdata New data to make predictions from
 #' @param gridval For continuous treatment. Controls for what values of treatment to predict
 #' @param prediction Return prediction using all trees ("overall") or using first i trees ("by iter")
-#' @param type Choose what you want ro predict
+#' @param type Choose what you want to predict
 #' @param alpha something
-#' @param useRse THis will be removed
 #' @param ... Additional Arguments
+#' @return A named vector where the values are the average minimum depth for each variable
+#' and the names are the associated variable names
 #' @export
 predict.CERFIT <- function(object,data,newdata, gridval=NULL,
                            prediction=c("overall","by iter"),
                            type=c("response","ITE","node","opT"),
-                           alpha=0.5,useRse=FALSE,...){
+                           alpha=0.5,...){
 
   #Return prediction using all trees ("overall") or using first i trees ("by iter")S
   prediction <- match.arg(prediction, c("overall","by iter"))
-
+  useRse <- object$useRes
+  response.type <- object$response.type
+  object <- object$randFor
   type <- match.arg(type, c("response","ITE","node","opT"))
   cumMeanNA <- function(x){
     xTemp<-x;
@@ -35,11 +38,16 @@ predict.CERFIT <- function(object,data,newdata, gridval=NULL,
   ## should add warnings here if gridbalue beyond min or max utrt
   #ntrt <- length(utrt)
   # if grival is null, use the 10th quantile
-  if(useRse){
+  if(useRse == TRUE & response.type == "continous"){
     resformula <-  stats::as.formula(paste(all.vars(formulaTree)[1], paste(all.vars(formulaTree)[2:(length(all.vars(formulaTree))-1)], collapse=" + "), sep=" ~ "))
     reslm <- stats::lm(resformula,data)
     ylmp <- stats::predict(reslm,newdata)
-    print("WHAT")
+    #print("WHAT")
+  } else if(useRse == TRUE & response.type == "binary") {
+    resformula <-  stats::as.formula(paste(all.vars(formulaTree)[1], paste(all.vars(formulaTree)[2:(length(all.vars(formulaTree))-1)], collapse=" + "), sep=" ~ "))
+    reslm <- stats::glm(resformula,data,family = stats::binomial())
+    ylmp <- stats::fitted(reslm,newdata)
+    #print("WHAT2")
   } else {
     ylmp<-rep(0,nrow(newdata))
   }
@@ -99,7 +107,7 @@ predict.CERFIT <- function(object,data,newdata, gridval=NULL,
       Ypre[[i]]<-t(apply(ypre[[i]],1,cumMeanNA))
     }
     cumypre<-t(matrix(unlist(Ypre),ncol=NROW(newdata),byrow = TRUE))
-    ntree<-length(x)
+    ntree<-length(object)
     cumypre.l<- lapply(seq(1,(ntrt*ntree),by=ntree),function(i,k) k[,i:(i+ntree-1)], k=cumypre)
     print(cumypre.l)
     if(type=="response"){

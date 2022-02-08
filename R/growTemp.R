@@ -23,7 +23,7 @@ growTemp <- function(id=1L, depth=1L, data, response, treatment, Propensity, sub
   #print(max(kidids, na.rm=TRUE))
   kids <- vector(mode="list", length=max(kidids, na.rm=TRUE))
   for (kidid in seq_along(kids)) {
-    s <- subset
+    s <- subset # subset is the previous loops s
     s[kidids != kidid] <- FALSE
     # Node ID
     if (kidid > 1) {myid <- max(nodeids(kids[[kidid-1]]))

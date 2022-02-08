@@ -13,11 +13,6 @@ growTree <- function(formula, data, subset=NULL, search=c("exhaustive","sss"),
   if(grepl("\\|", as.character(formula)[3])){
     treatment <- trimws(strsplit(as.character(formula)[3], "\\|")[[1]][2], which="both")
   } else {stop("Please specify the treatment in formula")}
-  if(useRes) {
-    oriResponse <- data$yo
-  } else {
-    oriResponse <- data[[response]]
-  }
 
   Propensity <- "prop"
   Iptw <- "iptw"
@@ -52,7 +47,7 @@ growTree <- function(formula, data, subset=NULL, search=c("exhaustive","sss"),
   # Return rich constparty object
   ret <- party(nodes, data = data,
                fitted = data.frame("(fitted)" = fitted,
-                                   "(response)" = as.numeric(oriResponse),
+                                   "(response)" = data[[response]],
                                    "(treatment)" = data[[treatment]],
                                    "(propensity)"= ps,#data[[Propensity]],
                                    "(iptw)"= data[[Iptw]],
