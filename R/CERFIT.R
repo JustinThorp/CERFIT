@@ -193,6 +193,11 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
                        scale.y=scale.y, useRes=useRes, trtlevels=trtlevels,response.type = response.type)#, useRpart=useRpart, minpvalue=minpvalue, corstr=corstr)
     list(tree=tree.b,cases=sort(unique(obs.b)))
   })
+  trt <- data[[all.vars(formula)[length(all.vars(formula))]]]
+  #print(length(trt))
+  #print(nrow(data))
+  #print(length(all.vars(formula)))
+  data[[all.vars(formula)[length(all.vars(formula))]]] <- as.numeric(as.character(trt))
   object <- list(randFor = randFor,trt.type = trt.type,
                  response.type = response.type,
                  useRes = useRes,
