@@ -42,12 +42,12 @@ predict.CERFIT <- function(object,newdata = object$data, gridval=NULL,
   #ntrt <- length(utrt)
   # if grival is null, use the 10th quantile
   if(useRse == TRUE & response.type == "continous"){
-    resformula <-  stats::as.formula(paste(all.vars(formulaTree)[1], paste(all.vars(formulaTree)[2:(length(all.vars(formulaTree))-1)], collapse=" + "), sep=" ~ "))
+    resformula <-  stats::as.formula(paste("yo", paste(all.vars(formulaTree)[2:(length(all.vars(formulaTree))-1)], collapse=" + "), sep=" ~ "))
     reslm <- stats::lm(resformula,data)
     ylmp <- stats::predict(reslm,newdata)
     #print("WHAT")
   } else if(useRse == TRUE & response.type == "binary") {
-    resformula <-  stats::as.formula(paste(all.vars(formulaTree)[1], paste(all.vars(formulaTree)[2:(length(all.vars(formulaTree))-1)], collapse=" + "), sep=" ~ "))
+    resformula <-  stats::as.formula(paste("yo", paste(all.vars(formulaTree)[2:(length(all.vars(formulaTree))-1)], collapse=" + "), sep=" ~ "))
     reslm <- stats::glm(resformula,data,family = stats::binomial())
     ylmp <- stats::fitted(reslm,newdata)
     #print("WHAT2")

@@ -71,6 +71,8 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
       data$yo <- data[[all.vars(formula)[1]]]
       data[[all.vars(formula)[1]]] <- eres
     }
+  } else {
+    data$yo <- data[[all.vars(formula)[1]]]
   }
   TrT <- data[all.vars(formula)[length(all.vars(formula))]]
   trt.length<-nrow(unique(TrT))
