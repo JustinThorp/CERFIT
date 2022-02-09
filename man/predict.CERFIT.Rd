@@ -23,13 +23,13 @@
 
 \item{prediction}{Return prediction using all trees ("overall") or using first i trees ("by iter")}
 
-\item{type}{Choose what you want to predict}
+\item{type}{Choose what value you wish to predict. Response will predict the repsone.
+ITE will predict the Individialzed treatment effect. Node will predcit the node. And opT
+will predict the optimal treatment for each observation.}
 
 \item{alpha}{something}
 
 \item{...}{Additional Arguments}
-
-\item{data}{Sata used to build the tree}
 }
 \value{
 A named vector where the values are the average minimum depth for each variable

@@ -36,7 +36,20 @@
 #' @param sampleMethod Method to sample learning sample
 #' @param useRes Logical indicator if you want to fit the CERFIT model to linear model
 #' @param scale.y Logical, standardize y when creating splits (For "sss" to increase stability)
-#' @return The fitted CERFIT model.
+#' @return Returns a fitted CERFIT object which is a list with the following elements
+#' \itemize{
+#' \item RandFor: The Random forest of interaction trees
+#' \item trt.type: A string containing the treatment type of the data used to fit the model
+#' \item response.type: A string representing the response type of the data
+#' \item useRes: A logical indicator that is TRUE if the model was fit on the
+#' resdiuals of a linear model
+#' \item data: The data used to fit the model also contains the propensity score if
+#'  method was set to observational}
+#' @details This function is implementation of Random Forest of Interaction Trees. A
+#' decision tree based method that approximates the effect of a treatment on each individual in
+#' a dataset. It does this by estimating the Individualized Treatment Effect (ITE) for each
+#' observation. This function also implements the extension of RFIT to observational data and
+#' to multiple and ordered treatments.
 #' @export
 ### Grows a random forest ###
 # Res is for fitting the residuals

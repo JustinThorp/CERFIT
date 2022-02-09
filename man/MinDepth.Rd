@@ -7,8 +7,17 @@
 MinDepth(cerfit)
 }
 \arguments{
-\item{cerfit}{An object of class CERFIT}
+\item{cerfit}{A CERFIT object}
+}
+\value{
+Returns a named effect with the name of each predictor used to fit the CERFIT
+object and its corresponding average minimal depth across all trees
 }
 \description{
-Calculate Variable Importance
+Calculates the average minimal depth of each predictor used to fit
+a CERFIT object.
+}
+\details{
+The depth of the root node is zero and if a variable does not appear
+at any split in a tree it is assigned maxdepth + 1 for that tree.
 }
