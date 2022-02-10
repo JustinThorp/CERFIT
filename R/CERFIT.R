@@ -151,21 +151,47 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
 
       }
     } else if(trt.type == "ordered") {
-      prop <- matrix(NA,ncol= length(unique(TrT[[1]])),nrow=nrow(data))
-      propfun <- twang::mnps(propformula,data=data[,all.vars(formula)[-1]],interaction.depth = 4,
-                             stop.method = "es.max",estimand="ATE",verbose=FALSE,n.trees = 10000)
-      pslist <- propfun$psList
-      for(i in 1:length(unique(TrT[[1]]))){
-        prop[,i]<-unlist(pslist[[i]]$ps)
+      if(PropForm == "GBM") {
+        prop <- matrix(NA,ncol= length(unique(TrT[[1]])),nrow=nrow(data))
+        propfun <- twang::mnps(propformula,data=data[,all.vars(formula)[-1]],interaction.depth = 4,
+                               stop.method = "es.max",estimand="ATE",verbose=FALSE,n.trees = 10000)
+        pslist <- propfun$psList
+        for(i in 1:length(unique(TrT[[1]]))){
+          prop[,i]<-unlist(pslist[[i]]$ps)
+        }
+        prop <- t(apply(prop, 1, cumsum))
+        prop <- as.data.frame(prop)[,colSums(is.na(prop)) == 0]
+        prop <- prop / prop[,length(unique(TrT[[1]]))]
+        #names(prop) <- TrT_splits[!is.na(TrT_splits)]
+        Iptw <- twang::get.weights(propfun,stop.method = "es.max",estimand="ATE")
+        #Iptw<- rep(1,nrow(data))
+        #Iptw <- sum(TrT)/length(TrT)*TrT/prop+sum(1-TrT)/length(TrT)*(1-TrT)/(1-prop)
+        #Iptw <-TrT/prop+(1-TrT)/(1-prop)
+        Iptw <- truncquant(Iptw,q=0.9)
+      } else if (PropForm == "CBPS") {
+        #data[,all.vars(formula)[length(all.vars(formula))]]<-as.factor(data[,all.vars(formula)[length(all.vars(formula))]])
+        propfun <- CBPS::CBPS(propformula, data = data[,all.vars(formula)[-1]],ATT=FALSE,method = "exact")#
+        prop <- propfun$fitted.values
+        print(prop)
+        Iptw <- propfun$weights
+        levels(data[,all.vars(formula)[length(all.vars(formula))]])<-c(1:trt.length)
+      } else if (PropForm == "old") {
+        prop <- matrix(NA,ncol= length(unique(TrT[[1]])),nrow=nrow(data))
+        propfun <- twang::mnps(propformula,data=data[,all.vars(formula)[-1]],interaction.depth = 4,
+                               stop.method = "es.max",estimand="ATE",verbose=FALSE,n.trees = 10000)
+        pslist <- propfun$psList
+        for(i in 1:length(unique(TrT[[1]]))){
+          prop[,i]<-unlist(pslist[[i]]$ps)
+        }
+        prop <- t(apply(prop, 1, cumsum))
+        prop <- as.data.frame(prop)[,colSums(is.na(prop)) == 0]
+        #names(prop) <- TrT_splits[!is.na(TrT_splits)]
+        Iptw <- twang::get.weights(propfun,stop.method = "es.max",estimand="ATE")
+        #Iptw<- rep(1,nrow(data))
+        #Iptw <- sum(TrT)/length(TrT)*TrT/prop+sum(1-TrT)/length(TrT)*(1-TrT)/(1-prop)
+        #Iptw <-TrT/prop+(1-TrT)/(1-prop)
+        Iptw <- truncquant(Iptw,q=0.9)
       }
-      prop <- t(apply(prop, 1, cumsum))
-      prop <- as.data.frame(prop)[,colSums(is.na(prop)) == 0]
-      #names(prop) <- TrT_splits[!is.na(TrT_splits)]
-      Iptw <- twang::get.weights(propfun,stop.method = "es.max",estimand="ATE")
-      #Iptw<- rep(1,nrow(data))
-      #Iptw <- sum(TrT)/length(TrT)*TrT/prop+sum(1-TrT)/length(TrT)*(1-TrT)/(1-prop)
-      #Iptw <-TrT/prop+(1-TrT)/(1-prop)
-      Iptw <- truncquant(Iptw,q=0.9)
     }  else stop("Please specify a propensity score method: randomForest or CBPS or GBM", call. = FALSE)
   } else if (method=="RCT") {
     prop <- rep(1,nrow(data))#rep("none",nrow(data)) # for observational no prop need
