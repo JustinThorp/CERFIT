@@ -1,16 +1,22 @@
 #' Get predictions from a CERFIT object
 #'
-#' @param object An object of class CERFIT
-#' @param newdata New data to make predictions from
+#' @param object A fitted CERFIT object
+#' @param newdata New data to make predictions from. IF not provided will make predctions
+#' on training data
 #' @param gridval For continuous treatment. Controls for what values of treatment to predict
 #' @param prediction Return prediction using all trees ("overall") or using first i trees ("by iter")
-#' @param type Choose what value you wish to predict. Response will predict the repsone.
-#' ITE will predict the Individialzed treatment effect. Node will predcit the node. And opT
+#' @param type Choose what value you wish to predict. Response will predict the response.
+#' ITE will predict the Individualized treatment effect. Node will predict the node. And opT
 #' will predict the optimal treatment for each observation.
-#' @param alpha something
+#' @param alpha For continuous treatment its is the mixing parameter for the elastic
+#' net regularization in each node. When equal to 0 it is ridge regression and
+#' when equal to 1 is is lasso regression.
 #' @param ... Additional Arguments
-#' @return A named vector where the values are the average minimum depth for each variable
-#' and the names are the associated variable names
+#' @return The return value depends of the type argument. If type is response the function
+#' will return matrix a n rows and a number of columns equal to the levels of treatment.
+#' IF type is ITE then it returns a matrix with n rows and a number of columns equal to
+#' one minus the levels of treatment. And if type is opT then its return a numeric
+#' vector of length n.
 #' @export
 predict.CERFIT <- function(object,newdata = NULL, gridval=NULL,
                            prediction=c("overall","by iter"),

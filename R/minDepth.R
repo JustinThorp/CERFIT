@@ -1,7 +1,7 @@
 #' Calculate Variable Importance
 #'
-#' @param cerfit A CERFIT object
-#' @return Returns a named effect with the name of each predictor used to fit the CERFIT
+#' @param cerfit A fitted CERFIT object
+#' @return Returns a named vector with the name of each predictor used to fit the CERFIT
 #' object and its corresponding average minimal depth across all trees
 #' @description Calculates the average minimal depth of each predictor used to fit
 #' a CERFIT object.

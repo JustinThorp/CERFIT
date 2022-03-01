@@ -7,10 +7,10 @@
 MinDepth(cerfit)
 }
 \arguments{
-\item{cerfit}{A CERFIT object}
+\item{cerfit}{A fitted CERFIT object}
 }
 \value{
-Returns a named effect with the name of each predictor used to fit the CERFIT
+Returns a named vector with the name of each predictor used to fit the CERFIT
 object and its corresponding average minimal depth across all trees
 }
 \description{

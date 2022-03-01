@@ -2,7 +2,7 @@
 % Please edit documentation in R/CERFIT.R
 \name{CERFIT}
 \alias{CERFIT}
-\title{Fits a Causal Effect Random Forest of Interactions Trees}
+\title{Fits a Random Forest of Interactions Trees}
 \usage{
 CERFIT(
   formula,
@@ -69,17 +69,27 @@ Returns a fitted CERFIT object which is a list with the following elements
 \item trt.type: A string containing the treatment type of the data used to fit the model
 \item response.type: A string representing the response type of the data
 \item useRes: A logical indicator that is TRUE if the model was fit on the
-resdiuals of a linear model
+residuals of a linear model
 \item data: The data used to fit the model also contains the propensity score if
 method was set to observational}
 }
 \description{
-Fits a Causal Effect Random Forest of Interactions Trees
+Estimates the a observations response for each level of treatment
 }
 \details{
-This function is implementation of Random Forest of Interaction Trees. A
-decision tree based method that approximates the effect of a treatment on each individual in
-a dataset. It does this by estimating the Individualized Treatment Effect (ITE) for each
-observation. This function also implements the extension of RFIT to observational data and
-to multiple and ordered treatments.
+This function is implementation of Random Forest of Interaction Trees proposed
+in Su (2018). It also handles extension for multiple, ordered and continuous
+treatment. Function can be used for RCT data or observational data has shown in Li, et al.
+(2022). The RFIT is decision tree based method that approximates the effect of a treatment
+on each individual in a dataset. It does this by estimating a observations response
+for each level of treatment.
+}
+\references{
+\itemize{
+\item Li, Luo, et al. Causal Effect Random Forest of
+Interaction Trees for Learning Individualized Treatment Regimes with
+Multiple Treatments in Observational Studies. Stat, 2022,
+https://doi.org/10.1002/sta4.457.
+\item Su, X., Peña, A., Liu, L., & Levine, R. (2018). Random forests of interaction trees for estimating individualized treatment effects in randomized trials.
+Statistics in Medicine, 37(17), 2547- 2560.}
 }
