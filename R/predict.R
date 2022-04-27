@@ -32,7 +32,7 @@ predict.CERFIT <- function(object,newdata = NULL, gridval=NULL,
   object <- object$randFor
   type <- match.arg(type, c("response","ITE","node","opT"))
   cumMeanNA <- function(x){
-    xTemp<-x;
+    xTemp <- x;
     xTemp[is.na(xTemp)] <- 0
     cumsum(xTemp)/cumsum(!is.na(x))
     }

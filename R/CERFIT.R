@@ -18,7 +18,9 @@
 #' @importFrom grid depth
 #' @importFrom stats complete.cases
 #' @importFrom stats terms
-#' @description Estimates the a observations response for each level of treatment
+#' @description Estimates the a observations individualized treatment effect for RCT
+#' and observational data. Treatment can be an binary, multiple, ordered, or continuous
+#' varaible.
 #' @param formula Formula to build CERFIT.  Categorical predictors must be listed as a factor. e.g., Y ~ x1 + x2 | treatment
 #' @param data Data to grow a tree.
 #' @param ntrees Number of Trees to grow
@@ -47,10 +49,12 @@
 #' \item data: The data used to fit the model also contains the propensity score if
 #'  method was set to observational}
 #' @details This function is implementation of Random Forest of Interaction Trees proposed
-#' in Su (2018). It also handles extension for multiple, ordered and continuous
-#' treatment. Function can be used for RCT data or observational data has shown in Li, et al.
-#' (2022). The RFIT is decision tree based method that approximates the effect of a treatment
-#' on each individual in a dataset. It does this by estimating a observations response
+#' in Su (2018). Which is a tree based estimates the individualized treatment effect (ITE)
+#' for each observation.  It does this by estimating a observations response
+#' for each level of treatment.
+#' It also handles extension for multiple, ordered and continuous
+#' treatment. This Function can be used for RCT data or observational data as shown in Li, et al.
+#' (2022).  It does this by estimating a observations response
 #' for each level of treatment.
 #' @references
 #' \itemize{
@@ -102,7 +106,7 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
   if (trt.length<2) stop("Only one treatment?", call. = FALSE)
   trt.type <- ifelse(trt.length==2,"binary","multiple")
   trt.type <- ifelse(is.ordered(TrT[[1]]),"ordered",trt.type)
-  #trt.type <- ifelse(trt.length>10, "continuous", trt.type)
+  trt.type <- ifelse(trt.length>10, "continuous", trt.type)
   trtlevels<-c(1:trt.length)
   print(trtlevels)
   print(paste(trt.type,"Treatment"))

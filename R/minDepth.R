@@ -4,7 +4,8 @@
 #' @return Returns a named vector with the name of each predictor used to fit the CERFIT
 #' object and its corresponding average minimal depth across all trees
 #' @description Calculates the average minimal depth of each predictor used to fit
-#' a CERFIT object.
+#' a CERFIT object. It calculates varaible importance by using a varaibles average minimal depth.
+#' Varaibles with a lower average minimal depth are more important.
 #' @details  The depth of the root node is zero and if a variable does not appear
 #' at any split in a tree it is assigned maxdepth + 1 for that tree.
 #' @export

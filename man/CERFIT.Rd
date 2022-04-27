@@ -74,14 +74,18 @@ residuals of a linear model
 method was set to observational}
 }
 \description{
-Estimates the a observations response for each level of treatment
+Estimates the a observations individualized treatment effect for RCT
+and observational data. Treatment can be an binary, multiple, ordered, or continuous
+varaible.
 }
 \details{
 This function is implementation of Random Forest of Interaction Trees proposed
-in Su (2018). It also handles extension for multiple, ordered and continuous
-treatment. Function can be used for RCT data or observational data has shown in Li, et al.
-(2022). The RFIT is decision tree based method that approximates the effect of a treatment
-on each individual in a dataset. It does this by estimating a observations response
+in Su (2018). Which is a tree based estimates the individualized treatment effect (ITE)
+for each observation.  It does this by estimating a observations response
+for each level of treatment.
+It also handles extension for multiple, ordered and continuous
+treatment. This Function can be used for RCT data or observational data as shown in Li, et al.
+(2022).  It does this by estimating a observations response
 for each level of treatment.
 }
 \references{

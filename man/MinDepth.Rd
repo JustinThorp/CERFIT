@@ -15,7 +15,8 @@ object and its corresponding average minimal depth across all trees
 }
 \description{
 Calculates the average minimal depth of each predictor used to fit
-a CERFIT object.
+a CERFIT object. It calculates varaible importance by using a varaibles average minimal depth.
+Varaibles with a lower average minimal depth are more important.
 }
 \details{
 The depth of the root node is zero and if a variable does not appear
