@@ -64,7 +64,9 @@ predictTree <- function(tree, newdata=tree$data, gridval, LB, UB, ntrt,type="res
     })
     nodepred<- cbind(ufit,matrix(unlist(pred), ncol = length(pred[[1]]), byrow = TRUE))
   }
-  if(type=="opT") ntrt<-2
+  if(type=="opT" && ntrt  > 10) {
+    ntrt<-2
+    }
   predictions<-as.data.frame(cbind(nodesNewdata,matrix(NA,ncol=ntrt,nrow=nrow(newdata))))
   predictions[,2:(ntrt+1)] <- nodepred[match(predictions$nodesNewdata,nodepred[,1]),2:(ntrt+1)]
   return(predictions[,2:(ntrt+1)])

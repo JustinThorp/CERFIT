@@ -29,6 +29,7 @@ predict.CERFIT <- function(object,newdata = NULL, gridval=NULL,
   data <- object$data
   if (is.null(newdata)) newdata <- object$data
   response.type <- object$response.type
+  treatment.type <- object$trt.type
   object <- object$randFor
   type <- match.arg(type, c("response","ITE","node","opT"))
   cumMeanNA <- function(x){
@@ -45,7 +46,7 @@ predict.CERFIT <- function(object,newdata = NULL, gridval=NULL,
   qu<-seq(LB,UB,length.out = 6)
   ## add a statement warning if gridvalue beyond the LB and UB
   ## should add warnings here if gridbalue beyond min or max utrt
-  #ntrt <- length(utrt)
+  ntrt <- length(utrt)
   # if grival is null, use the 10th quantile
   if(useRse == TRUE & response.type == "continous"){
     resformula <-  stats::as.formula(paste("yo", paste(all.vars(formulaTree)[2:(length(all.vars(formulaTree))-1)], collapse=" + "), sep=" ~ "))
@@ -78,7 +79,21 @@ predict.CERFIT <- function(object,newdata = NULL, gridval=NULL,
     y.pre<- t(matrix(unlist(lapply(ypre,rowMeans,na.rm=TRUE)), ncol=NROW(newdata),byrow = TRUE))
     y.pre<-y.pre+ylmp
     #y.pre: by row observation, each column is the corresponding predition for 1 treatment.
-  } else{
+  } else if (type == "opT" && treatment.type != "continous"){
+    predictMat<-lapply(lapply(object , "[[" , "tree"), predictTree, newdata=newdata,gridval=gridval,ntrt=ntrt,type="opT",  LB=LB,UB=UB,alpha=alpha)
+    #ntrt<-2
+    ypre<- do.call(cbind,predictMat)
+    ypre<- lapply(1:ntrt,function(i,k) k[,seq(i, NCOL(ypre), by = ntrt)], k=ypre)
+    y.pre<- t(matrix(unlist(lapply(ypre,rowMeans,na.rm=TRUE)), ncol=NROW(newdata),byrow = TRUE))
+    y.pre<- y.pre + ylmp
+    t.opt <- max.col(y.pre)
+    y.opt <- apply(y.pre, 1, max, na.rm = TRUE)
+    #topt<-as.matrix(ypre[[1]])
+    #yopt<-as.matrix(ypre[[2]])
+    #y.opt<-rowMeans(yopt,na.rm = T)+ylmp
+    #t.opt<-rowMeans(topt,na.rm = T)
+    y.pre<- cbind(t.opt,y.opt)
+  } else {
     predictMat<-lapply(lapply(object , "[[" , "tree"), predictTree, newdata=newdata,gridval=gridval,ntrt=ntrt,type="opT",  LB=LB,UB=UB,alpha=alpha)
     ntrt<-2
     ypre<- do.call(cbind,predictMat)
