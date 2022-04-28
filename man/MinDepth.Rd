@@ -22,3 +22,8 @@ Varaibles with a lower average minimal depth are more important.
 The depth of the root node is zero and if a variable does not appear
 at any split in a tree it is assigned maxdepth + 1 for that tree.
 }
+\examples{
+data <- data.frame(y = rnorm(100),x = rnorm(100),t = rbinom(1000,1,.5))
+fit <- CERFIT(y ~ x | t,method = "RCT",data = data,ntrees = 10)
+importance <- MinDepth(fit)
+}

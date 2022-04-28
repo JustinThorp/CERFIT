@@ -20,7 +20,7 @@
 #' @importFrom stats terms
 #' @description Estimates the a observations individualized treatment effect for RCT
 #' and observational data. Treatment can be an binary, multiple, ordered, or continuous
-#' varaible.
+#' variable.
 #' @param formula Formula to build CERFIT.  Categorical predictors must be listed as a factor. e.g., Y ~ x1 + x2 | treatment
 #' @param data Data to grow a tree.
 #' @param ntrees Number of Trees to grow
@@ -64,6 +64,8 @@
 #'  https://doi.org/10.1002/sta4.457.
 #' \item Su, X., Peña, A., Liu, L., & Levine, R. (2018). Random forests of interaction trees for estimating individualized treatment effects in randomized trials.
 #' Statistics in Medicine, 37(17), 2547- 2560.}
+#' @examples data <- data.frame(y = rnorm(100),x = rnorm(100),t = rbinom(1000,1,.5))
+#' fit <- CERFIT(y ~ x | t,method = "RCT",data = data,ntrees = 10)
 #' @export
 ### Grows a random forest ###
 # Res is for fitting the residuals

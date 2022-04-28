@@ -17,6 +17,9 @@
 #' IF type is ITE then it returns a matrix with n rows and a number of columns equal to
 #' one minus the levels of treatment. And if type is opT then its return a numeric
 #' vector of length n.
+#' @examples data <- data.frame(y = rnorm(100),x = rnorm(100),t = rbinom(1000,1,.5))
+#' fit <- CERFIT(y ~ x | t,method = "RCT",data = data,ntrees = 10)
+#' ite <- predict(fit,type = "ITE")
 #' @export
 predict.CERFIT <- function(object,newdata = NULL, gridval=NULL,
                            prediction=c("overall","by iter"),

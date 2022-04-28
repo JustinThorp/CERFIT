@@ -76,7 +76,7 @@ method was set to observational}
 \description{
 Estimates the a observations individualized treatment effect for RCT
 and observational data. Treatment can be an binary, multiple, ordered, or continuous
-varaible.
+variable.
 }
 \details{
 This function is implementation of Random Forest of Interaction Trees proposed
@@ -87,6 +87,10 @@ It also handles extension for multiple, ordered and continuous
 treatment. This Function can be used for RCT data or observational data as shown in Li, et al.
 (2022).  It does this by estimating a observations response
 for each level of treatment.
+}
+\examples{
+data <- data.frame(y = rnorm(100),x = rnorm(100),t = rbinom(1000,1,.5))
+fit <- CERFIT(y ~ x | t,method = "RCT",data = data,ntrees = 10)
 }
 \references{
 \itemize{
