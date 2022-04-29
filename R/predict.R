@@ -14,9 +14,10 @@
 #' @param ... Additional Arguments
 #' @return The return value depends of the type argument. If type is response the function
 #' will return matrix a n rows and a number of columns equal to the levels of treatment.
-#' IF type is ITE then it returns a matrix with n rows and a number of columns equal to
-#' one minus the levels of treatment. And if type is opT then its return a numeric
-#' vector of length n.
+#' If type is ITE then it returns a matrix with n rows and a number of columns equal to
+#' one minus the levels of treatment. And if type is opT then it returns a matrix with n
+#' rows and two columns. With the first column denoting the optimal treatment and
+#' the second column denoting the optimal response.
 #' @examples data <- data.frame(y = rnorm(100),x = rnorm(100),t = rbinom(1000,1,.5))
 #' fit <- CERFIT(y ~ x | t,method = "RCT",data = data,ntrees = 10)
 #' ite <- predict(fit,type = "ITE")

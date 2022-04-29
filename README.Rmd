@@ -18,20 +18,19 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The CERFIT R package is an implementation of Random Forest of Interaction Trees (RFIT) in R. Which is a modification of the random forest algorithm to estimate individualized treatment effect in randomized control trials and observational studies. It does this by modifying the split rule used in the tree growing process. It chooses a split by maximizing subgroup treatment heterogeneity. It can handle binary, multiple, ordered, and conintous treatment.
+The CERFIT R package is an implementation of Random Forest of Interaction Trees (RFIT) in R. Which is a modification of the random forest algorithm to estimate individualized treatment effect in randomized control trials and observational studies. It does this by modifying the split rule used in the tree growing process. It chooses a split by maximizing subgroup treatment heterogeneity. It can handle binary, multiple, ordered, and continuous treatment.
 
 ## Installation
 
 You can install the development version of CERFIT from [GitHub](https://github.com/JustinThorp/CERFIT) with:
 
-``` r
-# install.packages("devtools")
+``` {r, eval = F}
 devtools::install_github("JustinThorp/CERFIT")
 ```
 
 ## Example
 
-Below is a small example showing how to fit a Random Forest of Interaction Trees, get predictions from the tree, and calculate variable importance.
+Below is a small example showing how to fit a Random Forest of Interaction Trees, get predictions from the tree, and calculate variable importance. When growing the forest it will print our the response type, the treatment levels, the type of treatment varaible, and an updating count of the number of trees.
 
 ```{r example,message=FALSE}
 library(CERFIT)

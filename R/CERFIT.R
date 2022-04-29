@@ -18,13 +18,14 @@
 #' @importFrom grid depth
 #' @importFrom stats complete.cases
 #' @importFrom stats terms
-#' @description Estimates the a observations individualized treatment effect for RCT
+#' @description Estimates an observations individualized treatment effect for RCT
 #' and observational data. Treatment can be an binary, multiple, ordered, or continuous
 #' variable.
 #' @param formula Formula to build CERFIT.  Categorical predictors must be listed as a factor. e.g., Y ~ x1 + x2 | treatment
 #' @param data Data to grow a tree.
 #' @param ntrees Number of Trees to grow
-#' @param subset thing
+#' @param subset A logical vector that controls what observations are used to grow the forest.
+#' The default value will use the entire dataframe
 #' @param search Method to search through candidate splits
 #' @param method For observational study data, method="observation";for randomized study data, method="RCT".
 #' @param PropForm Method to estimate propensity score
@@ -85,7 +86,7 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
     response.type = "binary"
     #useRes = FALSE # Residual dont work with binary response right now
   }
-  print(paste(response.type,"response"))
+  cat(paste(response.type,"response","\n"))
   if(useRes){
     if (response.type == "binary") {
       resformula<- stats::as.formula(paste(all.vars(formula)[1], paste(all.vars(formula)[2:(length(all.vars(formula))-1)], collapse=" + "), sep=" ~ "))
@@ -110,8 +111,8 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
   trt.type <- ifelse(is.ordered(TrT[[1]]),"ordered",trt.type)
   trt.type <- ifelse(trt.length>10, "continuous", trt.type)
   trtlevels<-c(1:trt.length)
-  print(trtlevels)
-  print(paste(trt.type,"Treatment"))
+  cat(paste0(trtlevels),"\n")
+  cat(paste(trt.type,"Treatment","\n"))
 
 
   if(method=="observation"){
@@ -220,7 +221,7 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
   #return(data)
   #Construct random forest
   randFor <- lapply(1:ntrees,function(b){
-    if(b%%10==0){print(paste0("Tree Number: ",b))}
+    if(b%%10==0){cat(paste0("Tree Number: ",b))}
     #print(paste0("Tree Number: ",b))
     obs.b <- switch(sampleMethod,
                     bootstrap = sample.int(nrow(data), size=nrow(data), replace=TRUE, prob=data$iptw), #inverse weighting in boostrapping

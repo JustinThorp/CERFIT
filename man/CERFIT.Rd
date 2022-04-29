@@ -32,7 +32,8 @@ CERFIT(
 
 \item{ntrees}{Number of Trees to grow}
 
-\item{subset}{thing}
+\item{subset}{A logical vector that controls what observations are used to grow the forest.
+The default value will use the entire dataframe}
 
 \item{search}{Method to search through candidate splits}
 
@@ -74,7 +75,7 @@ residuals of a linear model
 method was set to observational}
 }
 \description{
-Estimates the a observations individualized treatment effect for RCT
+Estimates an observations individualized treatment effect for RCT
 and observational data. Treatment can be an binary, multiple, ordered, or continuous
 variable.
 }
