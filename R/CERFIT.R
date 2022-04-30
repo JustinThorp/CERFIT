@@ -86,7 +86,9 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
     response.type = "binary"
     #useRes = FALSE # Residual dont work with binary response right now
   }
-  cat(paste(response.type,"response","\n"))
+  response_print <- paste0(toupper(substring(response.type,first = 1,last = 1)),
+                          substring(response.type,first = 2))
+  cat(paste(response_print,"Response","\n"))
   if(useRes){
     if (response.type == "binary") {
       resformula<- stats::as.formula(paste(all.vars(formula)[1], paste(all.vars(formula)[2:(length(all.vars(formula))-1)], collapse=" + "), sep=" ~ "))
@@ -111,8 +113,11 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
   trt.type <- ifelse(is.ordered(TrT[[1]]),"ordered",trt.type)
   trt.type <- ifelse(trt.length>10, "continuous", trt.type)
   trtlevels<-c(1:trt.length)
+  trttype_print <- paste0(toupper(substring(trt.type,first = 1,last = 1)),
+                            substring(trt.type,first = 2))
+  cat("Treatment Levels: ")
   cat(paste0(trtlevels),"\n")
-  cat(paste(trt.type,"Treatment","\n"))
+  cat(paste(trttype_print,"Treatment","\n"))
 
 
   if(method=="observation"){
@@ -221,7 +226,7 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
   #return(data)
   #Construct random forest
   randFor <- lapply(1:ntrees,function(b){
-    if(b%%10==0){cat(paste0("Tree Number: ",b))}
+    if(b%%10==0){cat(paste0("Tree Number: ",b,"\n"))}
     #print(paste0("Tree Number: ",b))
     obs.b <- switch(sampleMethod,
                     bootstrap = sample.int(nrow(data), size=nrow(data), replace=TRUE, prob=data$iptw), #inverse weighting in boostrapping

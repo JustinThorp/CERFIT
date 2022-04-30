@@ -11,21 +11,40 @@ partition<- function(vars, y, trt, propensity, subset, search, method, split, ns
     propensity <- propensity[subset]
   }
   trt.length<-length(trtlevels)
-  if (is.ordered(trt)) {
-    # Chosses the split point for ordered treatment
-    ran <- sample(1:(length(propensity) - 2),1) # fix this so it chooses right split point
-    # and stuff
-    propensity <- propensity[,ran]
-    trt <- ifelse(trt <= ran,1,0)
-  } else if (trt.length>2 & trt.length < 10) {
-    ## if less than 10 treatments/levels
-    ran<- sample(unique(trt),2)
-    vars<-subset(vars,trt==ran[1] | trt==ran[2])
-    y<-subset(y,trt==ran[1] | trt==ran[2])
-    propensity<-subset(propensity,trt==ran[1] | trt==ran[2])
-    trt<-subset(trt,trt==ran[1] | trt==ran[2])
-    trt<-ifelse(trt==ran[1],1,0)
-    propensity<-propensity[,ran[1]] # need to make sure trt is levels as propensity nameorders
+  if (method != "RCT") {
+    if (is.ordered(trt)) {
+      # Chosses the split point for ordered treatment
+      ran <- sample(1:(length(propensity) - 2),1) # fix this so it chooses right split point
+      # and stuff
+      propensity <- propensity[,ran]
+      trt <- ifelse(trt <= ran,1,0)
+    } else if (trt.length>2 & trt.length < 10) {
+      ## if less than 10 treatments/levels
+      ran<- sample(unique(trt),2)
+      vars<-subset(vars,trt==ran[1] | trt==ran[2])
+      y<-subset(y,trt==ran[1] | trt==ran[2])
+      propensity<-subset(propensity,trt==ran[1] | trt==ran[2])
+      trt<-subset(trt,trt==ran[1] | trt==ran[2])
+      trt<-ifelse(trt==ran[1],1,0)
+      propensity<-propensity[,ran[1]] # need to make sure trt is levels as propensity nameorders
+    }
+  } else {
+    if (is.ordered(trt)) {
+      # Chooses the split point for ordered treatment
+      trt <- as.numeric(trt)
+      ran <- sample(min(trt):(max(trt) - 2),1) # fix this so it chooses right split point
+      # and stuff
+      trt <- ifelse(trt <= ran,1,0)
+    } else if (trt.length>2 & trt.length < 10) {
+      ## if less than 10 treatments/levels
+      ran<- sample(unique(trt),2)
+      vars<-subset(vars,trt==ran[1] | trt==ran[2])
+      y<-subset(y,trt==ran[1] | trt==ran[2])
+      #propensity<-subset(propensity,trt==ran[1] | trt==ran[2])
+      trt<-subset(trt,trt==ran[1] | trt==ran[2])
+      trt<-ifelse(trt==ran[1],1,0)
+      #propensity<-propensity[,ran[1]]
+    }
   }
 
 
