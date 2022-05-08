@@ -18,9 +18,9 @@ A data frame with 1000 rows and 7 variables:
 }
 }
 \source{
-\url{Wilke, Morten C., et al. “Estimating the Optimal Treatment
+Wilke, Morten C., et al. “Estimating the Optimal Treatment
 Regime for Student Success Programs.” Behaviormetrika, vol. 48, no. 2, 2021,
-pp. 309–343., https://doi.org/10.1007/s41237-021-00140-0. }
+pp. 309–343., https://doi.org/10.1007/s41237-021-00140-0.
 }
 \usage{
 educational
