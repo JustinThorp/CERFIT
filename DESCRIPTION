@@ -15,7 +15,6 @@ LinkingTo:
     Rcpp,
     RcppArmadillo
 Imports: 
-    pROC,
     partykit,
     CBPS,
     randomForest,
@@ -24,3 +23,5 @@ Imports:
     RcppArmadillo,
     stats,
     glmnet
+Depends: 
+    R (>= 2.10)
