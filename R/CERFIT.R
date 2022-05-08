@@ -218,6 +218,9 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
   } else if (method=="RCT") {
     prop <- rep(1,nrow(data))#rep("none",nrow(data)) # for observational no prop need
     Iptw<- rep(1,nrow(data))}
+  if(!exists("Iptw")) {
+    stop("Not able to estimate Propenisty Score. \n Check that your function arguments are correct")
+  }
   #data[,all.vars(formula)[length(all.vars(formula))]]<-as.numeric(as.character(data[,all.vars(formula)[length(all.vars(formula))]]))
   data[,all.vars(formula)[-length(all.vars(formula))]] <- sapply(data[,all.vars(formula)[-length(all.vars(formula))]],as.numeric)
   data$iptw <- Iptw

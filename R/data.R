@@ -1,8 +1,8 @@
 #' Observational Educational Dataset
 #'
-#' A simulated dataset containing the prices and other attributes of almost
-#' 54,000
-#' diamonds.
+#' A simulated dataset containing the grades and other attributes of 1000
+#' simulated students
+#'
 #'
 #' @format A data frame with 1000 rows and 7 variables:
 #' \describe{

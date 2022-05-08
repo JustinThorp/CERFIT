@@ -20,7 +20,6 @@ Imports:
     randomForest,
     twang,
     Rcpp,
-    RcppArmadillo,
     stats,
     glmnet
 Depends: 
