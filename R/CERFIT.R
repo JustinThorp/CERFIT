@@ -37,8 +37,9 @@
 #' @param minbucket Number of observations required in each child node
 #' @param maxdepth Maximum depth of tree
 #' @param a Sigmoid approximation variable (for "sss" which is still under development)
-#' @param sampleMethod Method to sample learning sample
-#' @param useRes Logical indicator if you want to fit the CERFIT model to linear model
+#' @param sampleMethod Method to sample learning sample. Defuault is bootstrap
+#' @param useRes Logical indicator if you want to fit the CERFIT model to
+#' the residuals from a linear model
 #' @param scale.y Logical, standardize y when creating splits (For "sss" to increase stability)
 #' @return Returns a fitted CERFIT object which is a list with the following elements
 #' \itemize{
@@ -65,8 +66,10 @@
 #'  https://doi.org/10.1002/sta4.457.
 #' \item Su, X., Peña, A., Liu, L., & Levine, R. (2018). Random forests of interaction trees for estimating individualized treatment effects in randomized trials.
 #' Statistics in Medicine, 37(17), 2547- 2560.}
-#' @examples data <- data.frame(y = rnorm(100),x = rnorm(100),t = rbinom(1000,1,.5))
-#' fit <- CERFIT(y ~ x | t,method = "RCT",data = data,ntrees = 10)
+#' @examples
+#' fit <- CERFIT(Y ~ SAT_MATH + HSGPA + AGE + GENDER + URM | A,
+#' method = "observation",PropForm = "CBPS",
+#' data = educational,ntrees = 30)
 #' @export
 ### Grows a random forest ###
 # Res is for fitting the residuals

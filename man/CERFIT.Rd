@@ -57,9 +57,10 @@ The default value will use the entire dataframe}
 
 \item{a}{Sigmoid approximation variable (for "sss" which is still under development)}
 
-\item{sampleMethod}{Method to sample learning sample}
+\item{sampleMethod}{Method to sample learning sample. Defuault is bootstrap}
 
-\item{useRes}{Logical indicator if you want to fit the CERFIT model to linear model}
+\item{useRes}{Logical indicator if you want to fit the CERFIT model to
+the residuals from a linear model}
 
 \item{scale.y}{Logical, standardize y when creating splits (For "sss" to increase stability)}
 }
@@ -90,8 +91,9 @@ treatment. This Function can be used for RCT data or observational data as shown
 for each level of treatment.
 }
 \examples{
-data <- data.frame(y = rnorm(100),x = rnorm(100),t = rbinom(1000,1,.5))
-fit <- CERFIT(y ~ x | t,method = "RCT",data = data,ntrees = 10)
+fit <- CERFIT(Y ~ SAT_MATH + HSGPA + AGE + GENDER + URM | A,
+method = "observation",PropForm = "CBPS",
+data = educational,ntrees = 30)
 }
 \references{
 \itemize{
