@@ -1,6 +1,6 @@
 Package: CERFIT
 Title: Fits a Random Forest of Interaction Trees 
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
     person(given = "Justin",family = "Thorp",email = "jjtthorp@gmail.com",role = c("aut","cre")),
     person(given = "Luo",family = "Li",role = "aut"),
@@ -15,12 +15,12 @@ LinkingTo:
     Rcpp,
     RcppArmadillo
 Imports: 
-    pROC,
     partykit,
     CBPS,
     randomForest,
     twang,
     Rcpp,
-    RcppArmadillo,
     stats,
     glmnet
+Depends: 
+    R (>= 2.10)

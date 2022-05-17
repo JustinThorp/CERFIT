@@ -109,7 +109,7 @@ partition<- function(vars, y, trt, propensity, subset, search, method, split, ns
   #return(findStats)
   #If each candidate variable cannot be split (e.g. cannot satisfy minbucket), return null
   if (all(is.na(findStats[1,]))) {return(NULL)}
-  if (class(findStats[2,which.max(findStats[1,])])=="factor") {
+  if (inherits(findStats[2,which.max(findStats[1,])],"factor")) {
     #Index is used for categorical variable splits
     print("factor")
     return(partysplit(varid=as.integer(colnames(findStats)[which.max(findStats[1,])]),

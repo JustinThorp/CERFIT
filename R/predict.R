@@ -19,7 +19,9 @@
 #' rows and two columns. With the first column denoting the optimal treatment and
 #' the second column denoting the optimal response.
 #' @examples data <- data.frame(y = rnorm(100),x = rnorm(100),t = rbinom(1000,1,.5))
-#' fit <- CERFIT(y ~ x | t,method = "RCT",data = data,ntrees = 10)
+#' fit <- CERFIT(Y ~ SAT_MATH + HSGPA + AGE + GENDER + URM | A,
+#' method = "observation",PropForm = "CBPS",
+#' data = educational,ntrees = 30)
 #' ite <- predict(fit,type = "ITE")
 #' @export
 predict.CERFIT <- function(object,newdata = NULL, gridval=NULL,
