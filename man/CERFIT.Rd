@@ -10,7 +10,7 @@ CERFIT(
   ntrees,
   subset = NULL,
   search = c("exhaustive", "sss"),
-  method = c("RCT", "observation"),
+  method = c("RCT", "observational"),
   PropForm = c("randomForest", "CBPS", "GBM", "HI"),
   split = c("t.test"),
   mtry = NULL,
@@ -77,15 +77,15 @@ method was set to observational}
 }
 \description{
 Estimates an observations individualized treatment effect for RCT
-and observational data. Treatment can be an binary, multiple, ordered, or continuous
+and observational data. Treatment can be an binary, categorical, ordered, or continuous
 variable.
 }
 \details{
-This function is implementation of Random Forest of Interaction Trees proposed
+This function implements Random Forest of Interaction Trees proposed
 in Su (2018). Which is a tree based estimates the individualized treatment effect (ITE)
 for each observation.  It does this by estimating a observations response
 for each level of treatment.
-It also handles extension for multiple, ordered and continuous
+It also handles extension for categorical, ordered and continuous
 treatment. This Function can be used for RCT data or observational data as shown in Li, et al.
 (2022).  It does this by estimating a observations response
 for each level of treatment.

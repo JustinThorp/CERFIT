@@ -28,9 +28,9 @@ on training data}
 ITE will predict the Individualized treatment effect. Node will predict the node. And opT
 will predict the optimal treatment for each observation.}
 
-\item{alpha}{For continuous treatment its is the mixing parameter for the elastic
+\item{alpha}{For continuous treatment it is the mixing parameter for the elastic
 net regularization in each node. When equal to 0 it is ridge regression and
-when equal to 1 is is lasso regression.}
+when equal to 1 it is lasso regression.}
 
 \item{...}{Additional Arguments}
 }

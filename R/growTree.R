@@ -1,11 +1,11 @@
 growTree <- function(formula, data, subset=NULL, search=c("exhaustive","sss"),
-                     method=c("RCT","observation"),
+                     method=c("RCT","observational"),
                      split=c("t.test", "pvalue"),#, "gini", "entropy", "information"),
                      mtry=NULL, nsplit=NULL, nsplit.random=TRUE, minsplit=20, minbucket=round(minsplit/3), maxdepth=20,
                      a=50, useRes, scale.y=FALSE, trtlevels,response.type)
 {
   search <- match.arg(search,c("exhaustive","sss"))
-  method <- match.arg(method,c("RCT","observation"))
+  method <- match.arg(method,c("RCT","observational"))
   split <- match.arg(split,c("t.test", "pvalue"))
   stopifnot(is.logical(nsplit.random), is.logical(scale.y), is.logical(useRes))#, is.logical(useRpart))
   if (is.numeric(nsplit) && !nsplit.random && nsplit < 5) {"Selecting <5 ordered splits may yield unexpected results"}

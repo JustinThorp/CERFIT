@@ -15,15 +15,14 @@ object and its corresponding average minimal depth across all trees
 }
 \description{
 Calculates the average minimal depth of each predictor used to fit
-a CERFIT object. It calculates varaible importance by using a varaibles average minimal depth.
-Varaibles with a lower average minimal depth are more important.
+a CERFIT object. It calculates variable's importance by using a vvariable's average minimal depth.
+variable's with a lower average minimal depth are more important.
 }
 \details{
 The depth of the root node is zero and if a variable does not appear
 at any split in a tree it is assigned maxdepth + 1 for that tree.
 }
 \examples{
-data <- data.frame(y = rnorm(100),x = rnorm(100),t = rbinom(1000,1,.5))
 fit <- CERFIT(Y ~ SAT_MATH + HSGPA + AGE + GENDER + URM | A,
 method = "observation",PropForm = "CBPS",
 data = educational,ntrees = 30)

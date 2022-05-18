@@ -33,13 +33,32 @@ count of the number of trees.
 
 ``` r
 library(CERFIT)
-data <- data.frame(y = rnorm(100),x = rnorm(100),t = rbinom(1000,1,.5))
-fit <- CERFIT(y ~ x | t,method = "RCT",data = data,ntrees = 10)
-#> continous response 
-#> 1 2 
-#> binary Treatment 
+fit <- CERFIT(Y ~ SAT_MATH + HSGPA + AGE + GENDER + URM | A,
+              method = "observation",
+              PropForm = "CBPS",
+              data = educational,
+              ntrees = 30)
+#> Continous Response 
+#> Treatment Levels: 1 2 3 
+#> Multiple Treatment 
 #> Tree Number: 10
-ite <- predict(fit,type = "ITE")
-#> [1] 0 1
+#> Tree Number: 20
+#> Tree Number: 30
+ite <- predict(fit)
+#> [1] 1 2 3
 importance <- MinDepth(fit)
 ```
+
+``` r
+library(tidyverse)
+ite %>%
+as.data.frame() %>%
+pivot_longer(everything()) %>%
+ggplot(aes(x = name, y = value)) +
+geom_violin() +
+scale_x_discrete(labels = c(0,1,2)) +
+labs(y = "Predicted Y",x = "A") +
+theme_bw()
+```
+
+<img src="man/figures/README-ite_plot-1.png" width="100%" />

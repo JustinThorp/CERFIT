@@ -8,9 +8,9 @@
 #' @param type Choose what value you wish to predict. Response will predict the response.
 #' ITE will predict the Individualized treatment effect. Node will predict the node. And opT
 #' will predict the optimal treatment for each observation.
-#' @param alpha For continuous treatment its is the mixing parameter for the elastic
+#' @param alpha For continuous treatment it is the mixing parameter for the elastic
 #' net regularization in each node. When equal to 0 it is ridge regression and
-#' when equal to 1 is is lasso regression.
+#' when equal to 1 it is lasso regression.
 #' @param ... Additional Arguments
 #' @return The return value depends of the type argument. If type is response the function
 #' will return matrix a n rows and a number of columns equal to the levels of treatment.

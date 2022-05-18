@@ -19,7 +19,7 @@
 #' @importFrom stats complete.cases
 #' @importFrom stats terms
 #' @description Estimates an observations individualized treatment effect for RCT
-#' and observational data. Treatment can be an binary, multiple, ordered, or continuous
+#' and observational data. Treatment can be an binary, categorical, ordered, or continuous
 #' variable.
 #' @param formula Formula to build CERFIT.  Categorical predictors must be listed as a factor. e.g., Y ~ x1 + x2 | treatment
 #' @param data Data to grow a tree.
@@ -50,11 +50,11 @@
 #' residuals of a linear model
 #' \item data: The data used to fit the model also contains the propensity score if
 #'  method was set to observational}
-#' @details This function is implementation of Random Forest of Interaction Trees proposed
+#' @details This function implements Random Forest of Interaction Trees proposed
 #' in Su (2018). Which is a tree based estimates the individualized treatment effect (ITE)
 #' for each observation.  It does this by estimating a observations response
 #' for each level of treatment.
-#' It also handles extension for multiple, ordered and continuous
+#' It also handles extension for categorical, ordered and continuous
 #' treatment. This Function can be used for RCT data or observational data as shown in Li, et al.
 #' (2022).  It does this by estimating a observations response
 #' for each level of treatment.
@@ -74,7 +74,7 @@
 ### Grows a random forest ###
 # Res is for fitting the residuals
 CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","sss"),
-                    method=c("RCT","observation"), PropForm=c("randomForest","CBPS","GBM", "HI"),
+                    method=c("RCT","observational"), PropForm=c("randomForest","CBPS","GBM", "HI"),
                     split=c("t.test"),
                     mtry=NULL, nsplit=NULL, nsplit.random=TRUE, minsplit=20, minbucket=round(minsplit/3), maxdepth=30,
                     a=50, sampleMethod=c('bootstrap','subsample','subsampleByID','learning'),
@@ -123,7 +123,7 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
   cat(paste(trttype_print,"Treatment","\n"))
 
 
-  if(method=="observation"){
+  if(method=="observational"){
     propformula <- stats::as.formula(paste(all.vars(formula)[length(all.vars(formula))], paste(all.vars(formula)[2:(length(all.vars(formula))-1)], collapse=" + "), sep=" ~ "))
     if(trt.type=="continuous"){
       if(PropForm=="CBPS"){
