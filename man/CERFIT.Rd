@@ -57,7 +57,7 @@ The default value will use the entire dataframe}
 
 \item{a}{Sigmoid approximation variable (for "sss" which is still under development)}
 
-\item{sampleMethod}{Method to sample learning sample. Defuault is bootstrap}
+\item{sampleMethod}{Method to sample learning sample. Default is bootstrap}
 
 \item{useRes}{Logical indicator if you want to fit the CERFIT model to
 the residuals from a linear model}
@@ -68,8 +68,10 @@ the residuals from a linear model}
 Returns a fitted CERFIT object which is a list with the following elements
 \itemize{
 \item RandFor: The Random forest of interaction trees
-\item trt.type: A string containing the treatment type of the data used to fit the model
-\item response.type: A string representing the response type of the data
+\item trt.type: A string containing the treatment type of the data used to fit the model.
+Cant be binary, multiple, ordered or continuous.
+\item response.type: A string representing the response type of the data. Can be
+binary or continuous.
 \item useRes: A logical indicator that is TRUE if the model was fit on the
 residuals of a linear model
 \item data: The data used to fit the model also contains the propensity score if
@@ -82,18 +84,54 @@ variable.
 }
 \details{
 This function implements Random Forest of Interaction Trees proposed
-in Su (2018). Which is a tree based estimates the individualized treatment effect (ITE)
-for each observation.  It does this by estimating a observations response
-for each level of treatment.
-It also handles extension for categorical, ordered and continuous
-treatment. This Function can be used for RCT data or observational data as shown in Li, et al.
-(2022).  It does this by estimating a observations response
-for each level of treatment.
+in Su (2018). Which is a modification of the Random Forest algorithm where
+instead of a split being chosen to maximize prediction accuracy each split
+is chosen to maximized subgroup treatment heterogeneity. It does this by
+maximizing the \eqn{\beta_3} t-test statistic in the following linear model at
+each split
+
+\eqn{Y_i = \beta_0 + \beta_1I(X_{ij} < c) + \beta_2I(Z = 1) + \beta_3I(X_{ij} < c)I(Z = 1)}
+
+Where \eqn{X_{ij}} represents the splitting variable and Z = 1 represents
+treatment. So, by maximizing the \eqn{\beta_3} t-test statistic we are
+maximizing the treatment difference between the nodes.
+
+The above equation only works when the data comes from a randomized control
+trial. But we can modify it to gives us unbiased estimates of treatment
+effect in observational studies. To do that we add propensity score into the
+linear model.
+
+\eqn{Y_i = \beta_0 + \beta_1I(X_{ij} < c) + \beta_2I(Z = 1) + \beta_3I(X_{ij} < c)I(Z = 1) + \beta_4e_i}
+
+Where \eqn{e_i} represents the propensity score. The CERIT function will estimate
+propensity score automatically when the method argument is set to observational.
+
+To control how this function estimates propensity score you can use the
+PropForm argument. Which can take four possible values randomForest, CBPS,
+GBM and HI. randomForest uses the randomForest package to use a random forest
+to estimate propensity score, CBPS uses Covaraite balancing propensity score
+to estimate propensity score GBM uses generlized boosted regression models
+to estimate propensity score, and HI is for continuous treatment and estimates
+the density function of the propensity score. Some of these options only work
+for certain treatment types. Full list below
+\itemize{
+\item binary: GBM, CBPS, randomForest
+\item categorical: GBM, CBPS
+\item ordered: GBM, CBPS
+\item continuous: CBPS, HI
+}
 }
 \examples{
 fit <- CERFIT(Y ~ SAT_MATH + HSGPA + AGE + GENDER + URM | A,
 method = "observation",PropForm = "CBPS",
 data = educational,ntrees = 30)
+
+
+fit <- CERFIT(Result_of_Treatment ~ sex + age + Number_of_Warts + Area + Time + Type | treatment,
+data = warts,
+ntrees = 500,
+method = "RCT",
+mtry = 2)
 }
 \references{
 \itemize{

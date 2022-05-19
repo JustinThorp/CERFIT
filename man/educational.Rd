@@ -14,7 +14,6 @@ A data frame with 1000 rows and 7 variables:
 \item{URM}{Under Represented Minority}
 \item{A}{Treatment Variable}
 \item{Y}{Students Final Grade}
-...
 }
 }
 \source{
