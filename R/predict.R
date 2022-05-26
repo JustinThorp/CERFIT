@@ -13,14 +13,14 @@
 #' when equal to 1 it is lasso regression.
 #' @param ... Additional Arguments
 #' @return The return value depends of the type argument. If type is response the function
-#' will return matrix a n rows and a number of columns equal to the levels of treatment.
+#' will return a matrix with n rows and the number of columns equal to the level of treatment.
 #' If type is ITE then it returns a matrix with n rows and a number of columns equal to
 #' one minus the levels of treatment. And if type is opT then it returns a matrix with n
 #' rows and two columns. With the first column denoting the optimal treatment and
 #' the second column denoting the optimal response.
 #' @examples data <- data.frame(y = rnorm(100),x = rnorm(100),t = rbinom(1000,1,.5))
 #' fit <- CERFIT(Y ~ SAT_MATH + HSGPA + AGE + GENDER + URM | A,
-#' method = "observation",PropForm = "CBPS",
+#' method = "observational",PropForm = "CBPS",
 #' data = educational,ntrees = 30)
 #' ite <- predict(fit,type = "ITE")
 #' @export

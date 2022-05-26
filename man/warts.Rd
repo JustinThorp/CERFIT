@@ -3,14 +3,14 @@
 \docType{data}
 \name{warts}
 \alias{warts}
-\title{Randomized Control Trial Warts Dataset}
+\title{Randomized Controlled Trial Warts Dataset}
 \format{
-A data frame with 180 rows and 78 variables:
+A data frame with 180 rows and 8 variables:
 \describe{
 \item{sex}{Patients Sex}
 \item{age}{Patients Age}
 \item{Time}{Time Elapsed Before Treatment}
-\item{Numer_of_Warts}{Number of Warts}
+\item{Number_of_Warts}{Number of Warts}
 \item{Type}{Type of Wart}
 \item{Area}{Wart Surface Area}
 \item{Result_of_Treatment}{Treatment Outcome}

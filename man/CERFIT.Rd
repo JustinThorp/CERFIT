@@ -15,12 +15,12 @@ CERFIT(
   split = c("t.test"),
   mtry = NULL,
   nsplit = NULL,
-  nsplit.random = TRUE,
+  nsplit.random = FALSE,
   minsplit = 20,
   minbucket = round(minsplit/3),
   maxdepth = 30,
   a = 50,
-  sampleMethod = c("bootstrap", "subsample", "subsampleByID", "learning"),
+  sampleMethod = c("bootstrap", "subsample", "subsampleByID", "allData"),
   useRes = TRUE,
   scale.y = FALSE
 )
@@ -37,7 +37,7 @@ The default value will use the entire dataframe}
 
 \item{search}{Method to search through candidate splits}
 
-\item{method}{For observational study data, method="observation";for randomized study data, method="RCT".}
+\item{method}{For observational study data, method="observational";for randomized study data, method="RCT".}
 
 \item{PropForm}{Method to estimate propensity score}
 
@@ -57,7 +57,10 @@ The default value will use the entire dataframe}
 
 \item{a}{Sigmoid approximation variable (for "sss" which is still under development)}
 
-\item{sampleMethod}{Method to sample learning sample. Default is bootstrap}
+\item{sampleMethod}{Method to sample learning sample. Default is bootstrap. Subsample
+takes a subsample of the orgginal data. SubsamplebyID samples by an ID column and
+uses all observations that have that ID. allData uses the entire data set
+for every tree.}
 
 \item{useRes}{Logical indicator if you want to fit the CERFIT model to
 the residuals from a linear model}
@@ -80,28 +83,28 @@ method was set to observational}
 \description{
 Estimates an observations individualized treatment effect for RCT
 and observational data. Treatment can be an binary, categorical, ordered, or continuous
-variable.
+variable. Currently if resposne is binary useRes must be set equal to TRUE.
 }
 \details{
 This function implements Random Forest of Interaction Trees proposed
 in Su (2018). Which is a modification of the Random Forest algorithm where
 instead of a split being chosen to maximize prediction accuracy each split
-is chosen to maximized subgroup treatment heterogeneity. It does this by
-maximizing the \eqn{\beta_3} t-test statistic in the following linear model at
-each split
+is chosen to maximized subgroup treatment heterogeneity. It chooses the best
+split by maximizing the test statistic for \eqn{H_0: \beta_3=0} in the
+following linear model
 
-\eqn{Y_i = \beta_0 + \beta_1I(X_{ij} < c) + \beta_2I(Z = 1) + \beta_3I(X_{ij} < c)I(Z = 1)}
+\eqn{Y_i = \beta_0 + \beta_1I(X_{ij} < c) + \beta_2I(Z = 1) + \beta_3I(X_{ij} < c)I(Z = 1) + \varepsilon_i}
 
 Where \eqn{X_{ij}} represents the splitting variable and Z = 1 represents
-treatment. So, by maximizing the \eqn{\beta_3} t-test statistic we are
+treatment. So, by maximizing the  test statistic for \eqn{\beta_3} we are
 maximizing the treatment difference between the nodes.
 
-The above equation only works when the data comes from a randomized control
+The above equation only works when the data comes from a randomized controlled
 trial. But we can modify it to gives us unbiased estimates of treatment
-effect in observational studies. To do that we add propensity score into the
+effect in observational studies Li et al. (2022). To do that we add propensity score into the
 linear model.
 
-\eqn{Y_i = \beta_0 + \beta_1I(X_{ij} < c) + \beta_2I(Z = 1) + \beta_3I(X_{ij} < c)I(Z = 1) + \beta_4e_i}
+\eqn{Y_i = \beta_0 + \beta_1I(X_{ij} < c) + \beta_2I(Z = 1) + \beta_3I(X_{ij} < c)I(Z = 1) + \beta_4e_i + \varepsilon_i}
 
 Where \eqn{e_i} represents the propensity score. The CERIT function will estimate
 propensity score automatically when the method argument is set to observational.
@@ -109,7 +112,7 @@ propensity score automatically when the method argument is set to observational.
 To control how this function estimates propensity score you can use the
 PropForm argument. Which can take four possible values randomForest, CBPS,
 GBM and HI. randomForest uses the randomForest package to use a random forest
-to estimate propensity score, CBPS uses Covaraite balancing propensity score
+to estimate propensity score, CBPS uses Covariate balancing propensity score
 to estimate propensity score GBM uses generlized boosted regression models
 to estimate propensity score, and HI is for continuous treatment and estimates
 the density function of the propensity score. Some of these options only work
@@ -123,13 +126,13 @@ for certain treatment types. Full list below
 }
 \examples{
 fit <- CERFIT(Y ~ SAT_MATH + HSGPA + AGE + GENDER + URM | A,
-method = "observation",PropForm = "CBPS",
+method = "observational",PropForm = "CBPS",
 data = educational,ntrees = 30)
 
 
 fit <- CERFIT(Result_of_Treatment ~ sex + age + Number_of_Warts + Area + Time + Type | treatment,
 data = warts,
-ntrees = 500,
+ntrees = 30,
 method = "RCT",
 mtry = 2)
 }
