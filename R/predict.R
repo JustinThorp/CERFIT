@@ -1,7 +1,7 @@
 #' Get predictions from a CERFIT object
 #'
 #' @param object A fitted CERFIT object
-#' @param newdata New data to make predictions from. IF not provided will make predctions
+#' @param newdata New data to make predictions from. IF not provided will make predictions
 #' on training data
 #' @param gridval For continuous treatment. Controls for what values of treatment to predict
 #' @param prediction Return prediction using all trees ("overall") or using first i trees ("by iter")
@@ -18,11 +18,14 @@
 #' one minus the levels of treatment. And if type is opT then it returns a matrix with n
 #' rows and two columns. With the first column denoting the optimal treatment and
 #' the second column denoting the optimal response.
-#' @examples data <- data.frame(y = rnorm(100),x = rnorm(100),t = rbinom(1000,1,.5))
+#' @examples
+#' \dontrun{
+#' data <- data.frame(y = rnorm(100),x = rnorm(100),t = rbinom(1000,1,.5))
 #' fit <- CERFIT(Y ~ SAT_MATH + HSGPA + AGE + GENDER + URM | A,
 #' method = "observational",PropForm = "CBPS",
 #' data = educational,ntrees = 30)
 #' ite <- predict(fit,type = "ITE")
+#' }
 #' @export
 predict.CERFIT <- function(object,newdata = NULL, gridval=NULL,
                            prediction=c("overall","by iter"),

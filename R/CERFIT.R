@@ -20,7 +20,7 @@
 #' @importFrom stats terms
 #' @description Estimates an observations individualized treatment effect for RCT
 #' and observational data. Treatment can be an binary, categorical, ordered, or continuous
-#' variable. Currently if resposne is binary useRes must be set equal to TRUE.
+#' variable. Currently if response is binary useRes must be set equal to TRUE.
 #' @param formula Formula to build CERFIT.  Categorical predictors must be listed as a factor. e.g., Y ~ x1 + x2 | treatment
 #' @param data Data to grow a tree.
 #' @param ntrees Number of Trees to grow
@@ -82,9 +82,9 @@
 #'PropForm argument. Which can take four possible values randomForest, CBPS,
 #' GBM and HI. randomForest uses the randomForest package to use a random forest
 #' to estimate propensity score, CBPS uses Covariate balancing propensity score
-#' to estimate propensity score GBM uses generlized boosted regression models
-#' to estimate propensity score, and HI is for continuous treatment and estimates
-#' the density function of the propensity score. Some of these options only work
+#' to estimate propensity score GBM uses generalized boosted regression models
+#' to estimate propensity score, and HI is for continuous treatment and
+#' estimates the general propensity score. Some of these options only work
 #' for certain treatment types. Full list below
 #' \itemize{
 #'  \item binary: GBM, CBPS, randomForest
@@ -100,8 +100,15 @@
 #'  Multiple Treatments in Observational Studies. Stat, 2022,
 #'  https://doi.org/10.1002/sta4.457.
 #' \item Su, X., Peña, A., Liu, L., & Levine, R. (2018). Random forests of interaction trees for estimating individualized treatment effects in randomized trials.
-#' Statistics in Medicine, 37(17), 2547- 2560.}
+#' Statistics in Medicine, 37(17), 2547- 2560.
+#' \item G. W. Imbens, The role of the propensity score in estimating dose-response
+#' functions., Biometrika, 87 (2000), pp. 706–710.
+#' \item G. Ridgeway, D. McCarey, and A. Morral, The twang package: Toolkit for
+#' weighting and analysis of nonequivalent groups, (2006).
+#' \item A. Liaw and M. Wiener, Classification and regression by randomforest, R
+#' News, 2 (2002), pp. 18–22}
 #' @examples
+#' \dontrun{
 #' fit <- CERFIT(Y ~ SAT_MATH + HSGPA + AGE + GENDER + URM | A,
 #' method = "observational",PropForm = "CBPS",
 #' data = educational,ntrees = 30)
@@ -112,6 +119,7 @@
 #' ntrees = 30,
 #' method = "RCT",
 #' mtry = 2)
+#' }
 #' @export
 ### Grows a random forest ###
 # Res is for fitting the residuals

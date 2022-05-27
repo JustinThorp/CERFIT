@@ -17,7 +17,7 @@
 \arguments{
 \item{object}{A fitted CERFIT object}
 
-\item{newdata}{New data to make predictions from. IF not provided will make predctions
+\item{newdata}{New data to make predictions from. IF not provided will make predictions
 on training data}
 
 \item{gridval}{For continuous treatment. Controls for what values of treatment to predict}
@@ -46,9 +46,11 @@ the second column denoting the optimal response.
 Get predictions from a CERFIT object
 }
 \examples{
+\dontrun{
 data <- data.frame(y = rnorm(100),x = rnorm(100),t = rbinom(1000,1,.5))
 fit <- CERFIT(Y ~ SAT_MATH + HSGPA + AGE + GENDER + URM | A,
 method = "observational",PropForm = "CBPS",
 data = educational,ntrees = 30)
 ite <- predict(fit,type = "ITE")
+}
 }

@@ -28,7 +28,7 @@ devtools::install_github("JustinThorp/CERFIT")
 Below is a small example showing how to fit a Random Forest of
 Interaction Trees, get predictions from the tree, and calculate variable
 importance. When growing the forest it will print our the response type,
-the treatment levels, the type of treatment varaible, and an updating
+the treatment levels, the type of treatment variable, and an updating
 count of the number of trees.
 
 ``` r
