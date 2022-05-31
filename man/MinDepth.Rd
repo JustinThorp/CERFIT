@@ -23,10 +23,10 @@ The depth of the root node is zero and if a variable does not appear
 at any split in a tree it is assigned maxdepth + 1 for that tree.
 }
 \examples{
-\dontrun{
-fit <- CERFIT(Y ~ SAT_MATH + HSGPA + AGE + GENDER + URM | A,
-method = "observational",PropForm = "CBPS",
-data = educational,ntrees = 30)
+fit <- CERFIT(Result_of_Treatment ~ sex + age + Number_of_Warts + Area + Time + Type | treatment,
+data = warts,
+ntrees = 30,
+method = "RCT",
+mtry = 2)
 importance <- MinDepth(fit)
-}
 }

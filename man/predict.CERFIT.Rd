@@ -46,11 +46,10 @@ the second column denoting the optimal response.
 Get predictions from a CERFIT object
 }
 \examples{
-\dontrun{
-data <- data.frame(y = rnorm(100),x = rnorm(100),t = rbinom(1000,1,.5))
-fit <- CERFIT(Y ~ SAT_MATH + HSGPA + AGE + GENDER + URM | A,
-method = "observational",PropForm = "CBPS",
-data = educational,ntrees = 30)
+fit <- CERFIT(Result_of_Treatment ~ sex + age + Number_of_Warts + Area + Time + Type | treatment,
+data = warts,
+ntrees = 30,
+method = "RCT",
+mtry = 2)
 ite <- predict(fit,type = "ITE")
-}
 }

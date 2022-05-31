@@ -108,18 +108,12 @@
 #' \item A. Liaw and M. Wiener, Classification and regression by randomforest, R
 #' News, 2 (2002), pp. 18–22}
 #' @examples
-#' \dontrun{
-#' fit <- CERFIT(Y ~ SAT_MATH + HSGPA + AGE + GENDER + URM | A,
-#' method = "observational",PropForm = "CBPS",
-#' data = educational,ntrees = 30)
-#'
-#'
 #' fit <- CERFIT(Result_of_Treatment ~ sex + age + Number_of_Warts + Area + Time + Type | treatment,
 #' data = warts,
 #' ntrees = 30,
 #' method = "RCT",
 #' mtry = 2)
-#' }
+#'
 #' @export
 ### Grows a random forest ###
 # Res is for fitting the residuals
