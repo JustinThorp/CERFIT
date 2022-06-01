@@ -5,7 +5,7 @@ Authors@R: c(
     person(given = "Justin",family = "Thorp",email = "jjtthorp@gmail.com",role = c("aut","cre")),
     person(given = "Luo",family = "Li",role = "aut"),
     person(given = "Juanjuan", family = "Fan",role = "aut"))
-Description: Fits a Causal Effect Random Forest of Interaction Tress (CERFIT) which is a modification of the Random Forest algorithm where each split is chosen to maximize subgroup treatment heterogeneity. Doing this allows it to estimate the individualized treatment effect for each observation in either randomied controlled trial (RCT) or observational data. For more information see X. Su, A. T. Peña, L. Liu, and R. A. Levine (2018) <doi:10.48550/arXiv.1709.04862> and Li et al. (2022) <doi:10.1002/sta4.457>.
+Description: Fits a Causal Effect Random Forest of Interaction Tress (CERFIT) which is a modification of the Random Forest algorithm where each split is chosen to maximize subgroup treatment heterogeneity. Doing this allows it to estimate the individualized treatment effect for each observation in either randomized controlled trial (RCT) or observational data. For more information see X. Su, A. T. Peña, L. Liu, and R. A. Levine (2018) <doi:10.48550/arXiv.1709.04862>.
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true

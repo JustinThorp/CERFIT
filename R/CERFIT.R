@@ -38,7 +38,7 @@
 #' @param maxdepth Maximum depth of tree
 #' @param a Sigmoid approximation variable (for "sss" which is still under development)
 #' @param sampleMethod Method to sample learning sample. Default is bootstrap. Subsample
-#' takes a subsample of the orgginal data. SubsamplebyID samples by an ID column and
+#' takes a subsample of the original data. SubsamplebyID samples by an ID column and
 #' uses all observations that have that ID. allData uses the entire data set
 #' for every tree.
 #' @param useRes Logical indicator if you want to fit the CERFIT model to
