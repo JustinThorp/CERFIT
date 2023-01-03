@@ -120,7 +120,7 @@
 CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","sss"),
                     method=c("RCT","observational"), PropForm=c("randomForest","CBPS","GBM", "HI"),
                     split=c("t.test"),
-                    mtry=NULL, nsplit=NULL, nsplit.random=FALSE, minsplit=20, minbucket=round(minsplit/3), maxdepth=30,
+                    mtry=NULL, nsplit=NULL, nsplit.random=FALSE, minsplit=20, minbucket=round(minsplit/3), maxdepth=30,oob = FALSE,
                     a=50, sampleMethod=c('bootstrap','subsample','subsampleByID','allData'),
                     useRes=TRUE, scale.y=FALSE)#
 {
@@ -286,7 +286,8 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
                     #              function(x){which(data[[idVar]] == x)}))},
                     allData = 1:nrow(data))
     sample.b <- data[obs.b,]
-    tree.b <- growTree(formula=formula, data=sample.b, subset=subset, search=search, method=method, split=split,
+    if(oob) {oob <- data[-obs.b,]} else {oob <- data[obs.b,]}
+    tree.b <- growTree(formula=formula, data=sample.b,oob = oob, subset=subset, search=search, method=method, split=split,
                        mtry=mtry, nsplit=nsplit, nsplit.random=nsplit.random, minsplit=minsplit, minbucket=minbucket, maxdepth=maxdepth, a=a,
                        scale.y=scale.y, useRes=useRes, trtlevels=trtlevels,response.type = response.type)#, useRpart=useRpart, minpvalue=minpvalue, corstr=corstr)
     list(tree=tree.b,cases=sort(unique(obs.b)))

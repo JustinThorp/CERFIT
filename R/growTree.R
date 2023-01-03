@@ -1,4 +1,4 @@
-growTree <- function(formula, data, subset=NULL, search=c("exhaustive","sss"),
+growTree <- function(formula, data,oob, subset=NULL, search=c("exhaustive","sss"),
                      method=c("RCT","observational"),
                      split=c("t.test", "pvalue"),#, "gini", "entropy", "information"),
                      mtry=NULL, nsplit=NULL, nsplit.random=TRUE, minsplit=20, minbucket=round(minsplit/3), maxdepth=20,
@@ -17,6 +17,7 @@ growTree <- function(formula, data, subset=NULL, search=c("exhaustive","sss"),
   Propensity <- "prop"
   Iptw <- "iptw"
   data <- data[c(all.vars(formula)[-1], response, Iptw,Propensity)] #Rearrange data so that response comes last
+  oob <- oob[c(all.vars(formula)[-1], response, Iptw,Propensity)]
 
   if (!all(complete.cases(data[-length(data)])) & !is.null(subset)) { paste0("Specifying subset with missing data can yield unexpected results") }
   data <- data[complete.cases(data[-length(data)]),]
@@ -37,20 +38,21 @@ growTree <- function(formula, data, subset=NULL, search=c("exhaustive","sss"),
                     maxdepth=maxdepth, a=a, scale.y=scale.y, trtlevels=trtlevels,response.type = response.type)
 
   # Compute terminal node number for each observation
-  fitted <- fitted_node(nodes, data=data)
-  thing <- ncol(data[Propensity])
+  fitted <- fitted_node(nodes, data=oob)
+
+  thing <- ncol(oob[Propensity])
   if(thing !=1) {
-    daprop<-cbind(data[[treatment]],data[[Propensity]])
+    daprop<-cbind(oob[[treatment]],oob[[Propensity]])
     ps<-apply(daprop,1,function(v){x<-v[1];return(v[x+1])})
   }
-  ps<- data[[Propensity]]
+  ps<- oob[[Propensity]]
   # Return rich constparty object
-  ret <- party(nodes, data = data,
+  ret <- party(nodes, data = oob,
                fitted = data.frame("(fitted)" = fitted,
-                                   "(response)" = data[[response]],
-                                   "(treatment)" = data[[treatment]],
+                                   "(response)" = oob[[response]],
+                                   "(treatment)" = oob[[treatment]],
                                    "(propensity)"= ps,#data[[Propensity]],
-                                   "(iptw)"= data[[Iptw]],
+                                   "(iptw)"= oob[[Iptw]],
                                    check.names = FALSE),
                terms = terms(formula))
   as.constparty(ret)
