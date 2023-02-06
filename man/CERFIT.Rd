@@ -19,6 +19,7 @@ CERFIT(
   minsplit = 20,
   minbucket = round(minsplit/3),
   maxdepth = 30,
+  oob = FALSE,
   a = 50,
   sampleMethod = c("bootstrap", "subsample", "subsampleByID", "allData"),
   useRes = TRUE,
@@ -54,6 +55,8 @@ The default value will use the entire dataframe}
 \item{minbucket}{Number of observations required in each child node}
 
 \item{maxdepth}{Maximum depth of tree}
+
+\item{oob}{Whether or not to use Out-of-bag sample for predictions.}
 
 \item{a}{Sigmoid approximation variable (for "sss" which is still under development)}
 

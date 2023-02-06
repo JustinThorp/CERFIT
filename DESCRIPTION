@@ -1,5 +1,5 @@
 Package: CERFIT
-Version: 0.1.0
+Version: 0.1.1
 Title: Causal Effect Random Forest of Interaction Trees
 Authors@R: c(
     person(given = "Justin",family = "Thorp",email = "jjtthorp@gmail.com",role = c("aut","cre")),
@@ -10,7 +10,7 @@ License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 LinkingTo: 
     Rcpp,
     RcppArmadillo

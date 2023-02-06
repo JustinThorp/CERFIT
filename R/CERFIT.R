@@ -36,6 +36,7 @@
 #' @param minsplit Number of observations required to continue growing tree
 #' @param minbucket Number of observations required in each child node
 #' @param maxdepth Maximum depth of tree
+#' @param oob Whether or not to use Out-of-bag sample for predictions.
 #' @param a Sigmoid approximation variable (for "sss" which is still under development)
 #' @param sampleMethod Method to sample learning sample. Default is bootstrap. Subsample
 #' takes a subsample of the original data. SubsamplebyID samples by an ID column and
