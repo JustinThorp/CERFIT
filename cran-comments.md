@@ -1,8 +1,9 @@
 ## Resubmission
 
-This is a resubmission. In this version I have:
+This is a new version of the CERFIT pacakges. In this version I have:
 
-* Fixed spelling errors
+* Added Out-of-Bag (OOB) predictions
+* Fixed Spelling Errors
 
 
 ## R CMD check results

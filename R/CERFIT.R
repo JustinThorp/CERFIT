@@ -76,7 +76,7 @@
 #'
 #'\eqn{Y_i = \beta_0 + \beta_1I(X_{ij} < c) + \beta_2I(Z = 1) + \beta_3I(X_{ij} < c)I(Z = 1) + \beta_4e_i + \varepsilon_i}
 #'
-#'Where \eqn{e_i} represents the propensity score. The CERIT function will estimate
+#'Where \eqn{e_i} represents the propensity score. The CERFIT function will estimate
 #'propensity score automatically when the method argument is set to observational.
 #'
 #'To control how this function estimates propensity score you can use the
