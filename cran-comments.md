@@ -1,9 +1,10 @@
 ## Resubmission
 
-This is a new version of the CERFIT pacakges. In this version I have:
+This is a resubmission. In this version I have:
 
 * Added Out-of-Bag (OOB) predictions
 * Fixed Spelling Errors
+* Removed C++11 requirement 
 
 
 ## R CMD check results
