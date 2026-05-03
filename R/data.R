@@ -1,7 +1,7 @@
 #' Observational Educational Dataset
 #'
 #' A simulated dataset containing the grades and other attributes of 1000
-#' simulated students
+#' simulated students.
 #'
 #'
 #' @format A data frame with 1000 rows and 7 variables:
@@ -22,8 +22,8 @@
 
 #' Randomized Controlled Trial Warts Dataset
 #'
-#' A dataset comparing immunotherapy to cryotherapy treatments and their effeteness of
-#' removing warts
+#' A dataset comparing immunotherapy to cryotherapy treatments and their effectiveness of
+#' removing warts.
 #'
 #'
 #' @format A data frame with 180 rows and 8 variables:

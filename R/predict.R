@@ -1,21 +1,21 @@
 #' Get predictions from a CERFIT object
 #'
 #' @param object A fitted CERFIT object
-#' @param newdata New data to make predictions from. IF not provided will make predictions
-#' on training data
-#' @param gridval For continuous treatment. Controls for what values of treatment to predict
-#' @param prediction Return prediction using all trees ("overall") or using first i trees ("by iter")
-#' @param type Choose what value you wish to predict. Response will predict the response.
-#' ITE will predict the Individualized treatment effect. Node will predict the node. And opT
+#' @param newdata New data to make predictions from. If not provided will make predictions
+#' on training data.
+#' @param gridval For continuous treatment. Controls which values of treatment to predict.
+#' @param prediction Return prediction using all trees ("overall") or using first i trees ("by iter").
+#' @param type Choose which value you wish to predict: 'response' will predict the potential outcome.
+#' 'ITE' will predict the individualized treatment effect. And 'opT'
 #' will predict the optimal treatment for each observation.
-#' @param alpha For continuous treatment it is the mixing parameter for the elastic
+#' @param alpha For continuous treatment. It is the mixing parameter for the elastic
 #' net regularization in each node. When equal to 0 it is ridge regression and
 #' when equal to 1 it is lasso regression.
 #' @param ... Additional Arguments
-#' @return The return value depends of the type argument. If type is response the function
+#' @return The return value depends of the type argument. If type is 'response' the function
 #' will return a matrix with n rows and the number of columns equal to the level of treatment.
-#' If type is ITE then it returns a matrix with n rows and a number of columns equal to
-#' one minus the levels of treatment. And if type is opT then it returns a matrix with n
+#' If type is 'ITE' then it returns a matrix with n rows and a number of columns equal to
+#' one minus the levels of treatment. And if type is 'opT' then it returns a matrix with n
 #' rows and two columns. With the first column denoting the optimal treatment and
 #' the second column denoting the optimal response.
 #' @examples
@@ -36,6 +36,40 @@ predict.CERFIT <- function(object,newdata = NULL, gridval=NULL,
   useRse <- object$useRes
   data <- object$data
   if (is.null(newdata)) newdata <- object$data
+
+  # Coerce newdata columns to match the stored training-data classes
+  common_vars <- intersect(names(newdata), names(data))
+  for (v in common_vars) {
+    train_col <- data[[v]]
+    new_col <- newdata[[v]]
+
+    if ((is.integer(train_col) || is.numeric(train_col)) && is.factor(new_col)) {
+      tmp <- suppressWarnings(as.numeric(as.character(new_col)))
+      if (!any(is.na(tmp) & !is.na(new_col))) {
+        if (is.integer(train_col)) {
+          newdata[[v]] <- as.integer(tmp)
+        } else {
+          newdata[[v]] <- tmp
+        }
+      }
+    } else if ((is.factor(train_col) || is.ordered(train_col)) && !is.factor(new_col)) {
+      newdata[[v]] <- factor(new_col, levels = levels(train_col), ordered = is.ordered(train_col))
+    } else if (is.character(train_col) && !is.character(new_col)) {
+      newdata[[v]] <- as.character(new_col)
+    } else if (is.logical(train_col) && !is.logical(new_col)) {
+      newdata[[v]] <- as.logical(new_col)
+    } else if (is.numeric(train_col) && !is.numeric(new_col) && !is.factor(new_col)) {
+      newdata[[v]] <- as.numeric(new_col)
+    } else if (is.integer(train_col) && !is.integer(new_col) && !is.factor(new_col)) {
+      newdata[[v]] <- as.integer(new_col)
+    }
+  }
+
+  # Note: "node" is accepted for forward compatibility but is not yet implemented.
+  # It is excluded from the package documentation. If developed in the future,
+  # a corresponding return block should be added in the prediction == "overall"
+  # and prediction == "by iter" sections below.
+  
   response.type <- object$response.type
   treatment.type <- object$trt.type
   object <- object$randFor
@@ -56,7 +90,7 @@ predict.CERFIT <- function(object,newdata = NULL, gridval=NULL,
   ## should add warnings here if gridbalue beyond min or max utrt
   ntrt <- length(utrt)
   # if grival is null, use the 10th quantile
-  if(useRse == TRUE & response.type == "continous"){
+  if(useRse == TRUE & response.type == "continuous"){
     resformula <-  stats::as.formula(paste("yo", paste(all.vars(formulaTree)[2:(length(all.vars(formulaTree))-1)], collapse=" + "), sep=" ~ "))
     reslm <- stats::lm(resformula,data)
     ylmp <- stats::predict(reslm,newdata)
@@ -69,10 +103,10 @@ predict.CERFIT <- function(object,newdata = NULL, gridval=NULL,
   } else {
     ylmp<-rep(0,nrow(newdata))
   }
-  if(length(utrt)<=20){ ## if less than 20 unique treatments/levels using unique treatments
+  if(length(utrt)<=15){ ## if less than or equal to 15 unique treatments/levels using unique treatments
     ntrt=length(utrt)
     gridval<-utrt
-  } else if(is.null(gridval)) { # if more than 20, and gridval is null, use percentiles at 5% increment
+  } else if(is.null(gridval)) { # if more than 15, and gridval is null, use percentiles at 5% increment
     gridval <- stats::quantile(utrt, prob = seq(0, 1, length = 21))
     ntrt<-length(gridval)-1
   } else {
@@ -87,7 +121,7 @@ predict.CERFIT <- function(object,newdata = NULL, gridval=NULL,
     y.pre<- t(matrix(unlist(lapply(ypre,rowMeans,na.rm=TRUE)), ncol=NROW(newdata),byrow = TRUE))
     y.pre<-y.pre+ylmp
     #y.pre: by row observation, each column is the corresponding predition for 1 treatment.
-  } else if (type == "opT" && treatment.type != "continous"){
+  } else if (type == "opT" && treatment.type != "continuous"){
     predictMat<-lapply(lapply(object , "[[" , "tree"), predictTree, newdata=newdata,gridval=gridval,ntrt=ntrt,type="opT",  LB=LB,UB=UB,alpha=alpha)
     #ntrt<-2
     ypre<- do.call(cbind,predictMat)
@@ -121,11 +155,13 @@ predict.CERFIT <- function(object,newdata = NULL, gridval=NULL,
       colnames(resp) <- yname
       return(resp)}
     if(type=="ITE") { #using the first level or smallest value as reference group
-      yname<-paste("y",utrt,"-y",utrt[1],sep="")
-      ite<- y.pre-y.pre[,1]
-      colnames(ite) <- c(yname)
-      return(ite[,-1])
+      yname <- paste("y", gridval[-1], "-y", gridval[1], sep = "")
+      ite <- y.pre - y.pre[,1]
+      ite <- ite[,-1, drop = FALSE]
+      colnames(ite) <- yname
+      return(ite)
     }
+    
     if(type=="opT") {
       yname<-c("opTreat","opResponse")
       opTY<-y.pre

@@ -26,6 +26,6 @@ educational
 }
 \description{
 A simulated dataset containing the grades and other attributes of 1000
-simulated students
+simulated students.
 }
 \keyword{datasets}

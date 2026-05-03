@@ -1,9 +1,63 @@
 ### Return predicted values from a tree. ###
 predictTree <- function(tree, newdata=tree$data, gridval, LB, UB, ntrt,type="response",alpha ){
+  parse_tree_formula <- function(form) {
+    form_chr <- paste(deparse(form), collapse = " ")
+    form_chr <- gsub("\\s+", " ", form_chr)
+
+    split_tilde <- strsplit(form_chr, "~", fixed = TRUE)[[1]]
+    if (length(split_tilde) != 2) {
+      stop("Unable to parse fitted CERFIT tree formula.", call. = FALSE)
+    }
+
+    rhs_full <- trimws(split_tilde[2])
+    rhs_parts <- strsplit(rhs_full, "|", fixed = TRUE)[[1]]
+    if (length(rhs_parts) != 2) {
+      stop("Unable to identify predictors from fitted CERFIT tree formula.", call. = FALSE)
+    }
+
+    x_part <- trimws(rhs_parts[1])
+    trt_part <- trimws(rhs_parts[2])
+
+    predictors <- trimws(unlist(strsplit(x_part, "\\+")))
+    predictors <- predictors[nzchar(predictors)]
+
+    list(
+      predictors = predictors,
+      treatment = trt_part
+    )
+  }
   da <- stats::fitted(tree)
   colnames(da)[2:5]<-c("y","Trt","prop","ww")
   ufit<-sort(unique(da[["(fitted)"]]))
-  nodesNewdata <- stats::predict(tree, newdata=newdata, type="node")
+
+  formulaTree <- stats::formula(tree$terms)
+  formula_info <- parse_tree_formula(formulaTree)
+  predictors <- formula_info$predictors
+  treatment <- formula_info$treatment
+
+  required_cols <- unique(c(predictors, treatment))
+  if (!all(required_cols %in% colnames(newdata))) {
+    missing_cols <- setdiff(required_cols, colnames(newdata))
+    stop(
+      paste(
+        "newdata is missing columns required for tree prediction:",
+        paste(missing_cols, collapse = ", ")
+      ),
+      call. = FALSE
+    )
+  }
+  newdata_tree <- newdata[, required_cols, drop = FALSE]
+
+  tree_tmp <- tree
+  tree_tmp$terms <- stats::terms(
+    stats::as.formula(
+      paste("~", paste(required_cols, collapse = " + "))
+    )
+  )
+  nodesNewdata <- stats::predict(tree_tmp, newdata=newdata_tree, type="node")
+  if (length(nodesNewdata) != nrow(newdata_tree)) {
+    stop("Tree node assignment failed for one or more rows in newdata.", call. = FALSE)
+  }
   Y.min<-ifelse(min(da[,2])<0,2*min(da[,2]),min(da[,2])/2)
   Y.max<-ifelse(max(da[,2])<0,max(da[,2])/2,2*max(da[,2]))
   #if (ntrt<=10){ #for binary and multiple trt, ignore gridval
@@ -68,6 +122,10 @@ predictTree <- function(tree, newdata=tree$data, gridval, LB, UB, ntrt,type="res
     ntrt<-2
     }
   predictions<-as.data.frame(cbind(nodesNewdata,matrix(NA,ncol=ntrt,nrow=nrow(newdata))))
-  predictions[,2:(ntrt+1)] <- nodepred[match(predictions$nodesNewdata,nodepred[,1]),2:(ntrt+1)]
+  matched_rows <- match(predictions$nodesNewdata,nodepred[,1])
+  if (nrow(nodepred) == 0 || all(is.na(matched_rows))) {
+    stop("No terminal-node predictions could be matched to newdata in predictTree().", call. = FALSE)
+  }
+  predictions[,2:(ntrt+1)] <- nodepred[matched_rows,2:(ntrt+1), drop = FALSE]
   return(predictions[,2:(ntrt+1)])
 }

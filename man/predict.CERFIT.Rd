@@ -17,28 +17,28 @@
 \arguments{
 \item{object}{A fitted CERFIT object}
 
-\item{newdata}{New data to make predictions from. IF not provided will make predictions
-on training data}
+\item{newdata}{New data to make predictions from. If not provided will make predictions
+on training data.}
 
-\item{gridval}{For continuous treatment. Controls for what values of treatment to predict}
+\item{gridval}{For continuous treatment. Controls which values of treatment to predict.}
 
-\item{prediction}{Return prediction using all trees ("overall") or using first i trees ("by iter")}
+\item{prediction}{Return prediction using all trees ("overall") or using first i trees ("by iter").}
 
-\item{type}{Choose what value you wish to predict. Response will predict the response.
-ITE will predict the Individualized treatment effect. Node will predict the node. And opT
+\item{type}{Choose which value you wish to predict: 'response' will predict the potential outcome.
+'ITE' will predict the individualized treatment effect. And 'opT'
 will predict the optimal treatment for each observation.}
 
-\item{alpha}{For continuous treatment it is the mixing parameter for the elastic
+\item{alpha}{For continuous treatment. It is the mixing parameter for the elastic
 net regularization in each node. When equal to 0 it is ridge regression and
 when equal to 1 it is lasso regression.}
 
 \item{...}{Additional Arguments}
 }
 \value{
-The return value depends of the type argument. If type is response the function
+The return value depends of the type argument. If type is 'response' the function
 will return a matrix with n rows and the number of columns equal to the level of treatment.
-If type is ITE then it returns a matrix with n rows and a number of columns equal to
-one minus the levels of treatment. And if type is opT then it returns a matrix with n
+If type is 'ITE' then it returns a matrix with n rows and a number of columns equal to
+one minus the levels of treatment. And if type is 'opT' then it returns a matrix with n
 rows and two columns. With the first column denoting the optimal treatment and
 the second column denoting the optimal response.
 }
