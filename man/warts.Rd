@@ -26,7 +26,7 @@ pp. 167–175., https://doi.org/10.1016/j.compbiomed.2017.01.001.
 warts
 }
 \description{
-A dataset comparing immunotherapy to cryotherapy treatments and their effeteness of
-removing warts
+A dataset comparing immunotherapy to cryotherapy treatments and their effectiveness of
+removing warts.
 }
 \keyword{datasets}

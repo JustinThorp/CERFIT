@@ -2,7 +2,7 @@
 % Please edit documentation in R/CERFIT.R
 \name{CERFIT}
 \alias{CERFIT}
-\title{Fits a Random Forest of Interactions Trees}
+\title{Fits a Random Forest of Interaction Trees}
 \usage{
 CERFIT(
   formula,
@@ -23,109 +23,128 @@ CERFIT(
   a = 50,
   sampleMethod = c("bootstrap", "subsample", "subsampleByID", "allData"),
   useRes = TRUE,
-  scale.y = FALSE
+  scale.y = FALSE,
+  response = c("auto", "continuous", "binary", "survival"),
+  surv_resid = c("deviance", "martingale"),
+  surv_id = NULL
 )
 }
 \arguments{
-\item{formula}{Formula to build CERFIT.  Categorical predictors must be listed as a factor. e.g., Y ~ x1 + x2 | treatment}
+\item{formula}{Formula to build CERFIT. Categorical predictors must be listed as a factor. e.g., Y ~ x1 + x2 | treatment.
+For survival outcomes, the response may be specified as Surv(time, event) or Surv(start, stop, event).}
 
 \item{data}{Data to grow a tree.}
 
-\item{ntrees}{Number of Trees to grow}
+\item{ntrees}{Number of trees to grow. This value should not be too small, as observations may not be well represented and averaging is insufficient, leading to unstable results.
+A value of 1000 is often recommended, but it can be reduced for smaller datasets or to speed up computation.}
 
 \item{subset}{A logical vector that controls what observations are used to grow the forest.
-The default value will use the entire dataframe}
+The default value will use the entire data frame.}
 
-\item{search}{Method to search through candidate splits}
+\item{search}{Split search strategy. Options: “exhaustive” (evaluate all cut points) or “sss” (sigmoid approximation, experimental).}
 
-\item{method}{For observational study data, method="observational";for randomized study data, method="RCT".}
+\item{method}{Study type. "RCT" for randomized data, "observational" for observational data.}
 
-\item{PropForm}{Method to estimate propensity score}
+\item{PropForm}{Method for estimating propensity scores (if method = "observational"). Options: "randomForest", "CBPS", "GBM", "HI". Not all options are compatible with all treatment types. See details.}
 
-\item{split}{Impurity measure splitting statistic}
+\item{split}{Impurity measure splitting statistic. Currently supports "t.test".}
 
 \item{mtry}{Number of variables to consider at each split}
 
-\item{nsplit}{Number of cut points selected}
+\item{nsplit}{Number of candidate cut points. If NULL, all possible cut points are considered. If an integer is provided, that many cut points are randomly selected from the set of possible cut points.}
 
-\item{nsplit.random}{Logical: indicates if process to select cut points are random}
+\item{nsplit.random}{Default is FALSE. If TRUE, candidate cut points are chosen randomly.}
 
-\item{minsplit}{Number of observations required to continue growing tree}
+\item{minsplit}{Number of observations required to continue growing tree.}
 
-\item{minbucket}{Number of observations required in each child node}
+\item{minbucket}{Number of observations required in each child node.}
 
-\item{maxdepth}{Maximum depth of tree}
+\item{maxdepth}{Maximum depth of tree.}
 
-\item{oob}{Whether or not to use Out-of-bag sample for predictions.}
+\item{oob}{Logical, whether or not to use out-of-bag sample for predictions. Default is FALSE.}
 
-\item{a}{Sigmoid approximation variable (for "sss" which is still under development)}
+\item{a}{Sigmoid approximation variable (for "sss" which is still under development).}
 
 \item{sampleMethod}{Method to sample learning sample. Default is bootstrap. Subsample
 takes a subsample of the original data. SubsamplebyID samples by an ID column and
 uses all observations that have that ID. allData uses the entire data set
 for every tree.}
 
-\item{useRes}{Logical indicator if you want to fit the CERFIT model to
-the residuals from a linear model}
+\item{useRes}{Default is TRUE. If TRUE, fits the model using residuals from a regression of the response on covariates (excluding treatment).
+Improves stability and accuracy. Linear regression is used for continuous responses, logistic regression for binary responses, Cox proportional hazards model are used for survival responses.
+If response is binary or survival, useRes must be set equal to TRUE.}
 
-\item{scale.y}{Logical, standardize y when creating splits (For "sss" to increase stability)}
+\item{scale.y}{Logical, standardize y when creating splits (For "sss" to increase stability).}
+
+\item{response}{Response type. Options are "auto", "continuous", "binary", and "survival".
+When response = auto, the function automatically detects a survival response if the formula uses Surv(...), detects a binary response if the outcome is stored as a factor with exactly two levels,
+and otherwise treats the response as continuous. Thus, numeric continuous outcomes are recognized automatically, but binary outcomes coded numerically (for example, 0/1) are not automatically identified as binary
+and should be specified with response = binary if that behavior is desired.}
+
+\item{surv_resid}{Residual type used for survival responses. Options are "deviance" and "martingale".}
+
+\item{surv_id}{Optional subject ID column name for survival models with time-dependent covariates in counting-process format, e.g. Surv(start, stop, event). Required for that format.}
 }
 \value{
-Returns a fitted CERFIT object which is a list with the following elements
+Returns a fitted CERFIT object which is a list containing the following elements:
 \itemize{
-\item RandFor: The Random forest of interaction trees
+\item randFor: The Random Forest of Interaction Trees.
 \item trt.type: A string containing the treatment type of the data used to fit the model.
-Cant be binary, multiple, ordered or continuous.
+Can be binary, multiple, ordered, or continuous.
 \item response.type: A string representing the response type of the data. Can be
 binary or continuous.
 \item useRes: A logical indicator that is TRUE if the model was fit on the
-residuals of a linear model
-\item data: The data used to fit the model also contains the propensity score if
-method was set to observational}
+residuals of a linear model.
+\item data: The data used to fit the model and includes the estimated propensity score if
+method was set to observational.
+}
 }
 \description{
-Estimates an observations individualized treatment effect for RCT
-and observational data. Treatment can be an binary, categorical, ordered, or continuous
-variable. Currently if response is binary useRes must be set equal to TRUE.
+Estimates individualized treatment effects (ITEs) using Random Forest of Interaction Trees.
+Works with randomized controlled trials (RCTs) and observational data.
+Treatment variables may be binary, categorical, ordered, or continuous. For binary and survival outcomes, useRes = TRUE must be specified.
 }
 \details{
 This function implements Random Forest of Interaction Trees proposed
-in Su (2018). Which is a modification of the Random Forest algorithm where
-instead of a split being chosen to maximize prediction accuracy each split
-is chosen to maximized subgroup treatment heterogeneity. It chooses the best
+in Su (2018), which is a modification of the Random Forest algorithm where
+instead of a split being chosen to maximize prediction accuracy; each split
+is chosen to maximize subgroup treatment heterogeneity. It chooses the best
 split by maximizing the test statistic for \eqn{H_0: \beta_3=0} in the
-following linear model
+following linear model:
 
 \eqn{Y_i = \beta_0 + \beta_1I(X_{ij} < c) + \beta_2I(Z = 1) + \beta_3I(X_{ij} < c)I(Z = 1) + \varepsilon_i}
 
 Where \eqn{X_{ij}} represents the splitting variable and Z = 1 represents
-treatment. So, by maximizing the  test statistic for \eqn{\beta_3} we are
+treatment. So, by maximizing the test statistic for \eqn{\beta_3} we are
 maximizing the treatment difference between the nodes.
 
 The above equation only works when the data comes from a randomized controlled
-trial. But we can modify it to gives us unbiased estimates of treatment
-effect in observational studies Li et al. (2022). To do that we add propensity score into the
+trial, but we can modify it to give us unbiased estimates of treatment
+effect in observational studies, as shown by Li et al. (2022). To do that we add propensity score into the
 linear model.
 
 \eqn{Y_i = \beta_0 + \beta_1I(X_{ij} < c) + \beta_2I(Z = 1) + \beta_3I(X_{ij} < c)I(Z = 1) + \beta_4e_i + \varepsilon_i}
 
-Where \eqn{e_i} represents the propensity score. The CERIT function will estimate
+Where \eqn{e_i} represents the propensity score. The CERFIT function will estimate
 propensity score automatically when the method argument is set to observational.
 
-To control how this function estimates propensity score you can use the
+To control how this function estimates propensity score, you can use the
 PropForm argument. Which can take four possible values randomForest, CBPS,
 GBM and HI. randomForest uses the randomForest package to use a random forest
-to estimate propensity score, CBPS uses Covariate balancing propensity score
-to estimate propensity score GBM uses generalized boosted regression models
-to estimate propensity score, and HI is for continuous treatment and
-estimates the general propensity score. Some of these options only work
-for certain treatment types. Full list below
+to estimate propensity score, CBPS uses Covariate Balancing Propensity Score
+to estimate propensity score, GBM uses generalized boosted regression models
+to estimate propensity score, and HI is the Hirano–Imbens generalized
+propensity score weighting for continuous treatments.
+Some of these options only work for certain treatment types.
+See the full list below.
 \itemize{
 \item binary: GBM, CBPS, randomForest
 \item categorical: GBM, CBPS
 \item ordered: GBM, CBPS
 \item continuous: CBPS, HI
 }
+Note: CBPS option supports up to four categories/levels of treatment,
+if there are more than four use GBM.
 }
 \examples{
 fit <- CERFIT(Result_of_Treatment ~ sex + age + Number_of_Warts + Area + Time + Type | treatment,
