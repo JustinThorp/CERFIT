@@ -18,3 +18,20 @@
 * Fixed spelling errors
 * Changed unique-treatment grid threshold from 20 to 15
 * Expanded documentation
+
+# CERFIT 0.2.1
+
+* Added URL and BugReports fields to DESCRIPTION
+* Fixed an off-by-one error in the default gridval that dropped the maximum treatment value
+* Added guard to reject continuous treatment with a gridval of 10 or fewer values 
+* Fixed `randomForest` method IPTW bug
+* Updated gridval documentation
+* Added unit tests
+* ITE prediction by iter now works with more than two arms and always returns
+  a named list with one matrix per contrast against the reference arm (see
+  `?predict.CERFIT`). For binary treatments this is a list of length one
+  rather than a matrix, so existing code should use `ite[[1]]`.
+* Added baseline model offset to prediction by iter when using residuals 
+* Prediction by iter names list elements by gridval value for continuous treatments
+* Added documentation for reproducibility with continuous treatments
+* Predict function errors when trying to predict optimal treatment by iter instead of returning null

@@ -334,7 +334,8 @@ CERFIT <- function( formula, data, ntrees, subset = NULL,search=c("exhaustive","
         prop <- propfun$predicted
         Iptw <- sum(TrT)/length(TrT)*TrT/prop+sum(1-TrT)/length(TrT)*(1-TrT)/(1-prop)
         #Iptw <-TrT/prop+(1-TrT)/(1-prop)
-        Iptw <- truncquant(Iptw[[1]],q=0.9)
+        #Iptw <- truncquant(Iptw[[1]],q=0.9) #JDM bug where this causes to only select the first weight
+        Iptw <- truncquant(Iptw,q=0.9)
       }
     } else if (trt.type=="multiple"){
       if(PropForm=="GBM") {

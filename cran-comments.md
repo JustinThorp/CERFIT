@@ -1,8 +1,9 @@
 ## Resubmission
 
-This is a resubmission of the CERFIT pacakges. In this version I have:
+This is a new version of the CERFIT pacakges. In this version I have:
 
-* Fixed issue that was causing a CRAN check not on windows.
+* Added Out-of-Bag (OOB) predictions
+* Fixed Spelling Errors
 
 
 ## R CMD check results

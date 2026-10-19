@@ -20,7 +20,12 @@
 \item{newdata}{New data to make predictions from. If not provided will make predictions
 on training data.}
 
-\item{gridval}{For continuous treatment. Controls which values of treatment to predict.}
+\item{gridval}{For continuous treatments with more than 15 unique values, the
+treatment values at which to predict. Must contain more than 10 values;
+shorter grids return an error. If \code{NULL}, the 0th, 5th, ..., 100th
+percentiles of the unique observed treatment values (21 values) are used. When the
+treatment has 15 or fewer unique values, \code{gridval} is ignored and
+predictions are made at each observed treatment value.}
 
 \item{prediction}{Return prediction using all trees ("overall") or using first i trees ("by iter").}
 
@@ -35,16 +40,51 @@ when equal to 1 it is lasso regression.}
 \item{...}{Additional Arguments}
 }
 \value{
-The return value depends of the type argument. If type is 'response' the function
-will return a matrix with n rows and the number of columns equal to the level of treatment.
-If type is 'ITE' then it returns a matrix with n rows and a number of columns equal to
-one minus the levels of treatment. And if type is 'opT' then it returns a matrix with n
-rows and two columns. With the first column denoting the optimal treatment and
-the second column denoting the optimal response.
+The return value depends on the \code{prediction} and \code{type} arguments.
+
+With \code{prediction = "overall"}: if \code{type = "response"}, a matrix with
+n rows and one column per treatment level. If \code{type = "ITE"}, a matrix
+with n rows and one column per contrast against the reference (lowest)
+treatment level, i.e. the number of levels minus one. If \code{type = "opT"},
+a matrix with n rows and two columns: the optimal treatment and the optimal
+response.
+
+With \code{prediction = "by iter"}: a named list of matrices, each with n rows
+and one column per tree. Column \code{j} is the estimate averaged over the
+first \code{j} trees, skipping trees that give no prediction for that
+observation, so the last column equals the \code{"overall"} result.
+\itemize{
+\item \code{type = "response"}: one matrix per treatment level (per
+\code{gridval} value for a continuous treatment), named \code{"ycum<level>"}.
+\item \code{type = "ITE"}: one matrix per contrast against the reference
+level, named \code{"ycum<level>-ycum<reference>"}. A list is returned even
+for a binary treatment, where it has length one.
+}
+\code{type = "opT"} is not supported with \code{prediction = "by iter"}.
 }
 \description{
 Get predictions from a CERFIT object
 }
+\section{Reproducibility with continuous treatments}{
+
+For a continuous treatment (a numeric treatment with more than 10 distinct
+values), each terminal node fits a cubic dose-response curve with
+\code{glmnet::cv.glmnet()}, which assigns cross-validation folds at random.
+As a result, repeated calls to \code{predict()} on the same fitted object can
+return slightly different values, and separate calls with
+\code{type = "response"}, \code{"ITE"}, or \code{"opT"} will not exactly
+reconcile with one another. To make predictions reproducible, call
+\code{set.seed()} immediately before each \code{predict()} call, using the
+same seed for calls whose results will be compared.
+Alternatively, predict the responses once and compute the ITEs directly as
+\code{resp[, -1] - resp[, 1]}, which is identical to \code{type = "ITE"}.
+
+Binary, multi-arm categorical, and ordered treatments, including numeric
+treatments with 10 or fewer distinct values, do not use this path; their
+predictions are deterministic, so a seed is needed only when fitting the
+model with \code{CERFIT()}.
+}
+
 \examples{
 fit <- CERFIT(Result_of_Treatment ~ sex + age + Number_of_Warts + Area + Time + Type | treatment,
 data = warts,
